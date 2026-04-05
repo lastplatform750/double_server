@@ -43,7 +43,7 @@
         state: directory
         owner: "{{ main_user }}"
         group: "{{ main_user }}"
-        mode: "660"
+        mode: "700"
 
     - name: Template the beets config
       ansible.builtin.template:

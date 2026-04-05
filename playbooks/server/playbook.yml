@@ -79,6 +79,14 @@
         group: root
         mode: "755"
 
+    - name: Create .config for [main_user]
+      ansible.builtin.file:
+        name: "/home/{{ main_user }}/.config"
+        state: directory
+        owner: "{{ main_user }}"
+        group: "{{ main_user }}"
+        mode: "700"
+
 - name: Setting up drive pool
   import_playbook: drive_pb.yml
 
