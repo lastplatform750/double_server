@@ -1,0 +1,30 @@
+---
+debug: false
+
+alpine_release: "3.23"
+alpine_repo_mirror: "https://dl-3.alpinelinux.org/"
+
+tailnet_dns: dingo-fish.ts.net
+
+timezone: America/New_York
+
+# hostnames
+gateway_hostname: pi
+server_hostname: dl
+
+# addresses
+subnet: 192.168.50.0/24
+gateway_subnet_ip: 192.168.50.1
+server_subnet_ip: 192.168.50.2
+
+# ports
+server_internal_ssh_port: 22
+server_external_ssh_port: 2223
+
+anki_port: 8070
+jellyfin_port: 8096
+navidrome_port: 4533
+paperless_port: 8000
+immich_port: 2283
+qbittorrent_webui_port: 8090
+qbittorrent_torrent_port: 50090

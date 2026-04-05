@@ -1,0 +1,9 @@
+auto lo
+iface lo inet loopback
+
+auto {{ wan_iface }}
+iface {{ wan_iface }} inet dhcp
+
+auto {{ lan_iface }}
+iface {{ lan_iface }} inet static
+    address {{ gateway_subnet_ip }}

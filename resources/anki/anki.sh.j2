@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+  
+name="anki"
+command="anki"
+command_args="--syncserver"
+command_user="anki"
+command_background="yes"
+pidfile="/run/anki.pid"
+
+depend() {
+        need net
+}

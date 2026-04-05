@@ -1,0 +1,73 @@
+---
+- name: Tailscale Setup
+  hosts: gateway
+  become: true
+
+  vars:
+    resources: ../../resources
+
+  tasks:
+    - name: Install openresolv
+      ansible.builtin.package:
+        name: openresolv
+        state: present
+        update_cache: true
+
+    - name: Install tailscale
+      ansible.builtin.package:
+        name: tailscale
+        state: present
+        update_cache: true
+        repository: "{{ alpine_repo_mirror }}/v{{ alpine_release }}/community"
+
+    - name: Enable and start Tailscale service
+      ansible.builtin.service:
+        name: tailscale
+        state: started
+        enabled: true
+
+    - name: Get Tailscale status
+      ansible.builtin.shell: >
+        set -o pipefail #
+        tailscale status | awk -F' ' 'FNR == 1 {print $5}'
+      register: tailscale_status
+      changed_when: tailscale_status.rc != 0
+
+    - name: Print Tailscale status
+      ansible.builtin.debug:
+        msg: "Tailscale Status: {{ tailscale_status.stdout }}"
+      when: debug
+
+    - name: Start and confirm Tailscale
+      when: 'tailscale_status.stdout == "" or "offline" in tailscale_status.stdout'
+      block:
+        - name: Bring Tailscale up
+          ansible.builtin.command: >
+            tailscale up
+            --authkey={{ gateway_ts_key | trim }}
+            {# without --reset tailscale does not allow us to change flags #}
+            --reset
+          register: tailscale_output
+          changed_when: tailscale_output.rc == 0
+
+        - name: Wait a few seconds
+          ansible.builtin.wait_for:
+            timeout: 10
+
+        - name: Get Tailscale status
+          ansible.builtin.shell: >
+            set -o pipefail
+            tailscale status | awk -F' ' 'FNR == 1 {print $5}'
+          register: new_tailscale_status
+          changed_when: new_tailscale_status.rc != 0
+
+        - name: Print Tailscale status
+          ansible.builtin.debug:
+            msg: "Tailscale Status: {{ new_tailscale_status.stdout }}"
+          when: debug
+
+        - name: See if status is up
+          ansible.builtin.assert:
+            that: 'new_tailscale_status.stdout != "" and "offline" not in new_tailscale_status.stdout'
+            fail_msg: Tailscale is NOT up!
+            success_msg: Tailscale is up!

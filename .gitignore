@@ -1,0 +1,4 @@
+.ansible
+.vagrant
+hosts.ini
+secret.yml

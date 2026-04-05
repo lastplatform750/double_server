@@ -1,0 +1,112 @@
+---
+- name: Server Setup
+  hosts: server
+  become: true
+
+  vars:
+    repository_template: ../../resources/server/repositories.j2
+
+  tasks:
+    - name: Announce debug
+      ansible.builtin.debug:
+        msg: "Debug is enabled!"
+      when: debug | bool
+
+    - name: Template in repository file
+      ansible.builtin.template:
+        src: "{{ repository_template }}"
+        dest: /etc/apk/repositories
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Update system
+      community.general.apk:
+        update_cache: true
+        upgrade: true
+
+    - name: Install rsync
+      community.general.apk:
+        name: rsync
+        state: present
+
+    - name: Create groups
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ server_groups }}"
+
+    - name: Create [main_user] user
+      ansible.builtin.user:
+        name: "{{ main_user }}"
+        state: present
+        groups: "{{ main_user_groups }}"
+        create_home: true
+
+    - name: Create service users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: present
+        groups: []
+        create_home: false
+      loop: "{{ service_users }}"
+
+    - name: Get group info
+      ansible.builtin.getent:
+        database: group
+        split: ":"
+
+    - name: Make gid dictionary
+      ansible.builtin.set_fact:
+        gid_dict: "{{ gid_dict | default({}) | combine({item.key: item.value[1]}) }}"
+      loop: "{{ ansible_facts['getent_group'] | dict2items }}"
+
+    - name: Get user info
+      ansible.builtin.getent:
+        database: passwd
+        split: ":"
+
+    - name: Make uid dictionary
+      ansible.builtin.set_fact:
+        uid_dict: "{{ uid_dict | default({}) | combine({item.key: item.value[1]}) }}"
+      loop: "{{ ansible_facts['getent_passwd'] | dict2items }}"
+
+    - name: Create /srv
+      ansible.builtin.file:
+        name: /srv
+        state: directory
+        owner: root
+        group: root
+        mode: "755"
+
+- name: Setting up drive pool
+  import_playbook: drive_pb.yml
+
+- name: Installing and Configuring Beets
+  import_playbook: beets_pb.yml
+
+- name: Installing and Configuring Docker
+  import_playbook: docker_pb.yml
+
+- name: Installing and Configuring Qbittorrent
+  import_playbook: qbittorrent_pb.yml
+
+- name: Installing and Configuring Jellyfin
+  import_playbook: jellyfin_pb.yml
+
+- name: Installing and Configuring Immich
+  import_playbook: immich_pb.yml
+
+- name: Installing and Configuring Navidrome
+  import_playbook: navidrome_pb.yml
+
+- name: Installing and Configuring Paperless
+  import_playbook: paperless_pb.yml
+
+- name: Installing and Configuring Anki Sync Server
+  import_playbook: anki_pb.yml
+
+# TODO:
+# ssh stuff
+# git stuff
+# backup handling

@@ -1,0 +1,150 @@
+---
+- name: Install and Configure Paperless
+  hosts: server
+  become: true
+
+  vars:
+    compose_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/docker-compose.sqlite-tika.yml"
+    compose_env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/docker-compose.env"
+    env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/.env"
+
+  tasks:
+    - name: Create paperless user
+      ansible.builtin.user:
+        name: paperless
+        state: present
+        create_home: false
+
+    - name: Create /srv/paperless
+      ansible.builtin.file:
+        name: /srv/paperless
+        state: directory
+        owner: paperless
+        group: paperless
+        mode: "750"
+
+    - name: Create /srv/paperless/data
+      ansible.builtin.file:
+        name: /srv/paperless/data
+        state: directory
+        owner: paperless
+        group: paperless
+        mode: "750"
+
+    - name: Create /srv/paperless/media
+      ansible.builtin.file:
+        name: /srv/paperless/media
+        state: directory
+        owner: paperless
+        group: paperless
+        mode: "750"
+
+    - name: Create /srv/paperless/export
+      ansible.builtin.file:
+        name: /srv/paperless/export
+        state: directory
+        owner: paperless
+        group: paperless
+        mode: "750"
+
+    - name: Create /srv/paperless/consume
+      ansible.builtin.file:
+        name: /srv/paperless/consume
+        state: directory
+        owner: paperless
+        group: paperless
+        mode: "750"
+
+    - name: Create [docker_compose_dir]/paperless
+      ansible.builtin.file:
+        name: "{{ docker_compose_dir }}/paperless"
+        state: directory
+        owner: root
+        group: stacks
+        mode: "750"
+
+    - name: Fetch the docker compose file
+      ansible.builtin.get_url:
+        url: "{{ compose_file_url }}"
+        dest: "{{ docker_compose_dir }}/paperless/docker-compose.yml"
+        owner: root
+        group: root
+        mode: "700"
+
+    - name: Set data volume location
+      ansible.builtin.replace:
+        path: "{{ docker_compose_dir }}/paperless/docker-compose.yml"
+        regexp: "- data:/usr/src/paperless/data"
+        replace: "- /srv/paperless/data:/usr/src/paperless/data"
+
+    - name: Set media volume location
+      ansible.builtin.replace:
+        path: "{{ docker_compose_dir }}/paperless/docker-compose.yml"
+        regexp: "- media:/usr/src/paperless/media"
+        replace: "- /srv/paperless/media:/usr/src/paperless/media"
+
+    - name: Set export volume location
+      ansible.builtin.replace:
+        path: "{{ docker_compose_dir }}/paperless/docker-compose.yml"
+        regexp: "- ./export:/usr/src/paperless/export"
+        replace: "- /srv/paperless/export:/usr/src/paperless/export"
+
+    - name: Set consume volume location
+      ansible.builtin.replace:
+        path: "{{ docker_compose_dir }}/paperless/docker-compose.yml"
+        regexp: "- ./consume:/usr/src/paperless/consume"
+        replace: "- /srv/paperless/consume:/usr/src/paperless/consume"
+
+    - name: Set uid and gid in docker-compose.yml
+      ansible.builtin.lineinfile:
+        path: "{{ docker_compose_dir }}/paperless/docker-compose.yml"
+        insertafter: "^\\s{4}image: ghcr.io/paperless-ngx/paperless-ngx:latest$"
+        line: "    user: {{ uid_dict['paperless'] }}:{{ gid_dict['paperless'] }}"
+        state: present
+
+    - name: Fetch the docker-compose.env file
+      ansible.builtin.get_url:
+        url: "{{ compose_env_file_url }}"
+        dest: "{{ docker_compose_dir }}/paperless/docker-compose.env"
+        owner: root
+        group: root
+        mode: "700"
+
+    - name: "Set PAPERLESS_TIME_ZONE to {{ timezone }}"
+      ansible.builtin.lineinfile:
+        path: "{{ docker_compose_dir }}/paperless/docker-compose.env"
+        insertafter: "EOF"
+        line: "PAPERLESS_TIME_ZONE={{ timezone }}"
+        state: present
+
+    - name: "Set PAPERLESS_SECRET_KEY"
+      ansible.builtin.lineinfile:
+        path: "{{ docker_compose_dir }}/paperless/docker-compose.env"
+        insertafter: "EOF"
+        line: "PAPERLESS_SECRET_KEY='{{ paperless_secret_key }}'"
+        state: present
+
+    - name: Fetch the .env file
+      ansible.builtin.get_url:
+        url: "{{ env_file_url }}"
+        dest: "{{ docker_compose_dir }}/paperless/.env"
+        owner: root
+        group: root
+        mode: "700"
+
+    - name: Start the paperless service
+      community.docker.docker_compose_v2:
+        project_name: paperless
+        project_src: "{{ docker_compose_dir }}/paperless"
+        state: present
+      register: docker_output
+
+    - name: Show results
+      ansible.builtin.debug:
+        var: docker_output
+
+    - name: Shut paperless down
+      community.docker.docker_compose_v2:
+        project_src: "{{ docker_compose_dir }}/paperless"
+        state: stopped
+      when: debug | bool

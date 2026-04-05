@@ -1,0 +1,77 @@
+---
+- name: Install and Configure Jellyfin
+  hosts: server
+  become: true
+
+  vars:
+    compose_file: ../../resources/jellyfin/docker-compose.yml
+    env_template: ../../resources/jellyfin/.env.j2
+
+    deps:
+      - pip
+
+  tasks:
+    - name: Create /srv/jellyfin
+      ansible.builtin.file:
+        name: /srv/jellyfin
+        state: directory
+        owner: jellyfin
+        group: jellyfin
+        mode: "750"
+
+    - name: Create /srv/jellyfin/config
+      ansible.builtin.file:
+        name: /srv/jellyfin/config
+        state: directory
+        owner: jellyfin
+        group: jellyfin
+        mode: "750"
+
+    - name: Create /srv/jellyfin/cache
+      ansible.builtin.file:
+        name: /srv/jellyfin/cache
+        state: directory
+        owner: jellyfin
+        group: jellyfin
+        mode: "750"
+
+    - name: "Create [docker_compose_dir]/jellyfin"
+      ansible.builtin.file:
+        name: "{{ docker_compose_dir }}/jellyfin"
+        state: directory
+        owner: root
+        group: stacks
+        mode: "750"
+
+    - name: Copy in docker-compose.yml
+      ansible.builtin.copy:
+        src: "{{ compose_file }}"
+        dest: "{{ docker_compose_dir }}/jellyfin/docker-compose.yml"
+        owner: root
+        group: root
+        mode: "700"
+
+    - name: Template in .env
+      ansible.builtin.template:
+        src: "{{ env_template }}"
+        dest: "{{ docker_compose_dir }}/jellyfin/.env"
+        owner: root
+        group: root
+        mode: "700"
+
+    - name: Start the jellyfin service
+      community.docker.docker_compose_v2:
+        project_name: jellyfin
+        project_src: "{{ docker_compose_dir }}/jellyfin"
+        state: present
+      register: docker_output
+
+    - name: Show results
+      ansible.builtin.debug:
+        var: docker_output
+
+    - name: Shut jellyfin down
+      community.docker.docker_compose_v2:
+        project_src: "{{ docker_compose_dir }}/jellyfin"
+        state: stopped
+      when: debug | bool

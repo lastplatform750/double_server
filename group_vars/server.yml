@@ -1,0 +1,120 @@
+---
+
+# versions
+pip_version: "26.0.1"
+
+# MAKE SURE THESE ARE CORRECT DRIVES
+zfs_pool_devices:
+  - sda
+
+main_user: "yes"
+main_user_groups:
+  - wheel
+  - audio
+  - input
+  - video
+  - netdev
+  - musicmedia
+  - vidmedia
+  - picmedia
+  - othermedia
+  - stacks
+
+external_mount: /mnt/data
+
+server_groups:
+  - musicmedia
+  - vidmedia
+  - picmedia
+  - othermedia
+  - stacks
+
+service_users:
+  - anki
+  - paperless
+  - qbittorrent
+  - jellyfin
+  - navidrome
+  - immich
+
+docker_compose_dir: /opt/stacks
+
+external_dirs:
+  vid:
+    path: "{{ external_mount }}/vid"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0750"
+    recurse: false
+  vid_live:
+    path: "{{ external_mount }}/vid/live"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0750"
+    recurse: true
+  vid_animated:
+    path: "{{ external_mount }}/vid/animated"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0750"
+    recurse: true
+  vid_key:
+    path: "{{ external_mount }}/vid/key"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0750"
+    recurse: true
+  vid_show:
+    path: "{{ external_mount }}/vid/show"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0750"
+    recurse: true
+  pic:
+    path: "{{ external_mount }}/pic"
+    owner: "{{ main_user }}"
+    group: picmedia
+    mode: "0750"
+    recurse: true
+  music:
+    path: "{{ external_mount }}/music"
+    owner: "{{ main_user }}"
+    group: musicmedia
+    mode: "0750"
+    recurse: false
+  music_untagged:
+    path: "{{ external_mount }}/music/untagged"
+    owner: qbittorrent
+    group: musicmedia
+    mode: "0750"
+    recurse: true
+  music_tagged:
+    path: "{{ external_mount }}/music/tagged"
+    owner: "{{ main_user }}"
+    group: musicmedia
+    mode: "0750"
+    recurse: true
+  other:
+    path: "{{ external_mount }}/other"
+    owner: qbittorrent
+    group: othermedia
+    mode: "0750"
+    recurse: true
+  qtmp:
+    path: "{{ external_mount }}/qtmp"
+    owner: qbittorrent
+    group: qbittorrent
+    mode: "0700"
+    recurse: true
+  beets:
+    path: "{{ external_mount }}/beets"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: false
+  immich_data:
+    path: "{{ external_mount }}/immich_data"
+    owner: immich
+    group: immich
+    mode: "0700"
+    recurse: false

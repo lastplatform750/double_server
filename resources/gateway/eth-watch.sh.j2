@@ -1,0 +1,20 @@
+#!/bin/sh
+SERVER={{ server_subnet_ip }}
+IFACE={{ lan_iface }}
+fail=0
+
+while sleep 2; do
+    if arping -q -f -I "$IFACE" -w 1 "$SERVER" >/dev/null 2>&1; then
+        fail=0
+    else
+        fail=$((fail + 1))
+        if [ "$fail" -ge 3 ]; then
+            logger -t eth-watch "resetting $IFACE after ARP failure"
+            ip neigh flush dev "$IFACE" >/dev/null 2>&1 || true
+            ip link set "$IFACE" down
+            sleep 1
+            ip link set "$IFACE" up
+            fail=0
+        fi
+    fi
+done

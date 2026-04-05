@@ -1,0 +1,51 @@
+---
+services:
+  gluetun:
+    image: ghcr.io/qdm12/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - "${WEBUI_PORT}:${WEBUI_PORT}/tcp" # qBittorrent Web UI (host -> gluetun -> qbittorrent)
+      - "${TORRENT_PORT}:${TORRENT_PORT}/tcp" # torrent listen port (optional)
+      - "${TORRENT_PORT}:${TORRENT_PORT}/udp"
+    environment:
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=wireguard
+      - "WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}"
+      - FIREWALL=on
+      - "FIREWALL_INPUT_PORTS=${WEBUI_PORT},${TORRENT_PORT}"
+      - "FIREWALL_OUTBOUND_SUBNETS=${LAN_NETWORK}"
+    volumes:
+      - /srv/gluetun:/gluetun
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
+      - net.ipv6.conf.lo.disable_ipv6=1
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: "service:gluetun"
+    user: "${QBIT_UID}:${QBIT_GID}"
+    group_add:
+      - "${VIDMEDIA_GID}"
+      - "${MUSICMEDIA_GID}"
+      - "${OTHERMEDIA_GID}"
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    environment:
+      - "PUID=${QBIT_UID}"
+      - "PGID=${QBIT_GID}"
+      - "WEBUI_PORT=${WEBUI_PORT}"
+      - "TORRENTING_PORT=${TORRENT_PORT}"
+    volumes:
+      - "${QBITTORRENT_CONFIG_DIR}:/config"
+      - "${HOST_VID_DIR}:/downloads/vid"
+      - "${HOST_MUSIC_DIR}:/downloads/music"
+      - "${HOST_OTHER_DIR}:/downloads/other"
+    restart: unless-stopped

@@ -1,0 +1,9 @@
+#!/sbin/openrc-run
+
+command="/usr/local/bin/eth-watch.sh"
+command_background="yes"
+pidfile="/run/eth-watch.pid"
+
+depend() {
+    need net
+}

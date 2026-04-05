@@ -1,0 +1,64 @@
+# beets config file
+
+directory: "{{ external_dirs['music_tagged']['path'] }}"
+library: "{{ external_dirs['beets']['path'] }}/library.db"
+
+artist_filename: cover
+threaded: yes
+
+import:
+    copy: yes    # Move files to new location
+    incremental: yes
+    from_scratch: yes
+    # copy: no   # Use files in place
+    # write: no  # Don't modify tags
+
+plugins:
+  - musicbrainz  # Example plugin for fetching metadata
+  - fetchart
+  - duplicates
+  - embedart
+  - convert
+  - chroma
+
+musicbrainz:
+    host: musicbrainz.org
+    https: yes
+    ratelimit: 1
+    ratelimit_interval: 1.0
+    extra_tags: []
+    genres: yes
+    genres_tag: genre
+    external_ids:
+        discogs: no
+        bandcamp: no
+        spotify: no
+        deezer: no
+        beatport: no
+        tidal: no
+    data_source_mismatch_penalty: 0.5
+    search_limit: 5
+
+duplicates:
+    tiebreak:
+        items: [bitrate]
+
+fetchart:
+    auto: no
+    cautious: no
+    sources: itunes amazon *
+    cover_format: PNG
+
+embedart:
+   auto: yes
+   clearart_on_import: no
+
+convert:
+   format: flac
+   auto: yes
+   tmpdir: "{{ external_mount }}/beets/tmp"
+   no_convert: ^path::\.(wma)$
+   delete_originals: no
+
+chroma:
+   auto: yes
