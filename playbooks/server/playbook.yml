@@ -21,12 +21,12 @@
         mode: "0644"
 
     - name: Update system
-      community.general.apk:
+      ansible.builtin.package:
         update_cache: true
         upgrade: true
 
     - name: Install rsync
-      community.general.apk:
+      ansible.builtin.package:
         name: rsync
         state: present
 

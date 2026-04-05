@@ -41,7 +41,7 @@
         mode: "550"
 
     - name: Install Anki
-      community.general.apk:
+      ansible.builtin.package:
         name: anki
         state: present
 

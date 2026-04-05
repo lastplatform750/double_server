@@ -30,13 +30,13 @@
             persistent: present
 
     - name: Install Docker
-      community.general.apk:
+      ansible.builtin.package:
         name: docker
         state: present
         update_cache: true
 
     - name: Install Docker Compose CLI
-      community.general.apk:
+      ansible.builtin.package:
         name: docker-cli-compose
         state: present
         update_cache: true

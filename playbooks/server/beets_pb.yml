@@ -18,7 +18,7 @@
 
   tasks:
     - name: Install dependencies
-      community.general.apk:
+      ansible.builtin.package:
         name: "{{ item }}"
         state: present
       loop: "{{ deps }}"
