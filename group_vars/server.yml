@@ -1,11 +1,12 @@
 ---
 
 # versions
-pip_version: "26.0.1"
+beets_pip_version: "26.0.1"
 
 # MAKE SURE THESE ARE CORRECT DRIVES
 zfs_pool_devices:
   - sda
+  - sdb
 
 main_user: "yes"
 main_user_groups:

@@ -34,7 +34,7 @@
         name: pip
         virtualenv: /opt/beets/venv
         virtualenv_command: "python3 -m venv"
-        version: "{{ pip_version }}"
+        version: "{{ beets_pip_version }}"
         state: present
 
     - name: Ensure /home/[main_user]/.config/beets
