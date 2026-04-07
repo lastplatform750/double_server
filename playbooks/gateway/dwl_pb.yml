@@ -1,0 +1,152 @@
+---
+- name: Dwl setup
+  hosts: gateway
+  become: true
+
+  vars:
+    repository_template: ../../resources/server/repositories.j2
+    autostart_template: ../../resources/dwl/autostart.sh.j2
+    alpine_release: "3.23"
+    alpine_repo_mirror: "https://dl-3.alpinelinux.org/"
+    dwl_release: "0.8"
+    dwl_source: "https://codeberg.org/dwl/dwl/releases/download/v0.8/dwl-v0.8.tar.gz"
+    wbg_source: "https://codeberg.org/dnkl/wbg"
+    gateway_user: rasp
+
+    dependencies:
+      - zotero
+      - git
+      - font-noto
+      - font-noto-cjk
+      - wmenu
+      - foot
+      - librewolf
+      - mesa-dri-gallium
+      - tar
+      - seatd
+      - clang21
+      - make
+      - libinput
+      - libinput-dev
+      - wayland
+      - wayland-dev
+      - wlroots
+      - wlroots-dev
+      - libxkbcommon
+      - libxkbcommon-dev
+      - wayland-protocols
+      - pkgconf
+      - pixman
+      - pixman-dev
+      - libpng
+      - libpng-dev
+      - jpeg
+      - jpeg-dev
+      - tllist
+      - tllist-dev
+      - meson
+      - thunar
+      - rsync
+
+  tasks:
+    - name: Template in repository file
+      ansible.builtin.template:
+        src: "{{ repository_template }}"
+        dest: /etc/apk/repositories
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Update system
+      ansible.builtin.package:
+        update_cache: true
+        upgrade: true
+
+    - name: Install dependencies
+      ansible.builtin.package:
+        name: "{{ dependencies | join(',') }}"
+        state: present
+
+    - name: Add user to seat group
+      ansible.builtin.user:
+        name: "{{ gateway_user }}"
+        groups: seat
+        append: true
+
+    - name: Make build directory
+      ansible.builtin.file:
+        name: "/home/{{ gateway_user }}/build"
+        owner: "{{ gateway_user }}"
+        group: "{{ gateway_user }}"
+        mode: "700"
+        state: directory
+
+    - name: Fetch the source
+      ansible.builtin.get_url:
+        url: "{{ dwl_source }}"
+        dest: "/home/{{ gateway_user }}/build/dwl.tar"
+        decompress: true
+        owner: "{{ gateway_user }}"
+        group: "{{ gateway_user }}"
+        mode: "700"
+
+    - name: Untar the source
+      ansible.builtin.unarchive:
+        src: "/home/{{ gateway_user }}/build/dwl.tar"
+        dest: "/home/{{ gateway_user }}/build"
+        owner: "{{ gateway_user }}"
+        group: "{{ gateway_user }}"
+        mode: "700"
+        remote_src: true
+
+    - name: Build and install dwl
+      community.general.make:
+        chdir: "/home/{{ gateway_user }}/build/dwl-v{{ dwl_release }}"
+        target: install
+      become: true
+
+    - name: Put in launcher script
+      ansible.builtin.copy:
+        src: ../../resources/dwl/dwl.sh
+        dest: /usr/local/bin/s
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Start and enable seat daemon
+      ansible.builtin.service:
+        name: seatd
+        state: started
+        enabled: true
+
+    - name: Copy in kernel settings
+      ansible.builtin.copy:
+        src: ../../resources/dwl/usercfg.txt
+        dest: /boot/usercfg.txt
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Setup udev
+      ansible.builtin.command:
+        cmd: setup-devd udev
+
+    ## wbg section ##
+
+    - name: Get the wbg source
+      ansible.builtin.git:
+        repo: "{{ wbg_source }}"
+        dest: "/home/{{ gateway_user }}/build/wbg"
+
+    - name: Make and install wbg
+      ansible.builtin.shell:
+        cmd: meson --buildtype=release build && ninja -C build && ninja -C build install
+        chdir: "/home/{{ gateway_user }}/build/wbg"
+
+    - name: Template in autostart script
+      ansible.builtin.template:
+        src: "{{ autostart_template }}"
+        dest: /usr/local/bin/autostart.sh
+        owner: root
+        group: root
+        mode: "0755"

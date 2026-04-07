@@ -23,10 +23,10 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "../playbook.yml"
+    ansible.playbook = "../playbooks/gateway/dwl_pb.yml"
     ansible.host_vars = {"gateway" => {}}
     ansible.ask_vault_pass = true
-    ansible.raw_arguments = ["-e", "@../../../vars/secrets.enc debug=true"]
+    ansible.raw_arguments = ["-e", "@../group_vars/secret.yml"]
   end
 
   # Disable automatic box update checking. If you disable this, then
