@@ -2,4 +2,4 @@
 
 export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$(id -u)
 mkdir -p $XDG_RUNTIME_DIR
-dwl -s "/usr/local/bin/autostart.sh"
+dbus-run-session dwl -s '/usr/local/bin/autostart.sh'

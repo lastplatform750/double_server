@@ -14,6 +14,8 @@
     gateway_user: rasp
 
     dependencies:
+      - adwaita-icon-theme
+      - blueman
       - zotero
       - git
       - font-noto
@@ -67,10 +69,12 @@
         name: "{{ dependencies | join(',') }}"
         state: present
 
-    - name: Add user to seat group
+    - name: Add user to seat and lp (bluetooth) group
       ansible.builtin.user:
         name: "{{ gateway_user }}"
-        groups: seat
+        groups: 
+          - seat
+          - lp
         append: true
 
     - name: Make build directory
@@ -150,3 +154,10 @@
         owner: root
         group: root
         mode: "0755"
+
+    ## bluetooth section ##
+    - name: Start and enable bluetooth daemon
+      ansible.builtin.service:
+        name: bluetooth
+        state: started
+        enabled: true
