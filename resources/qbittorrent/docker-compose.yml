@@ -37,7 +37,8 @@ services:
       - "${OTHERMEDIA_GID}"
     depends_on:
       gluetun:
-        condition: service_healthy
+        condition: service_started
+        restart: true
     environment:
       - "PUID=${QBIT_UID}"
       - "PGID=${QBIT_GID}"
@@ -48,4 +49,5 @@ services:
       - "${HOST_VID_DIR}:/downloads/vid"
       - "${HOST_MUSIC_DIR}:/downloads/music"
       - "${HOST_OTHER_DIR}:/downloads/other"
+      - "${HOST_TEMP_DIR}:/downloads/temp"
     restart: unless-stopped
