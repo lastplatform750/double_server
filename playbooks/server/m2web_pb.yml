@@ -1,0 +1,78 @@
+---
+- name: Install and Configure macaulay2web
+  hosts: server
+  become: true
+
+  vars:
+    compose_template: ../../resources/m2web/docker-compose.yml.j2
+    env_template: ../../resources/m2web/.env.j2
+
+    m2web_docker_git: "https://github.com/lastplatform750/m2web_docker"
+
+    m2web_dir: /srv/m2web
+
+  tasks:
+    - name: Install dependencies
+      ansible.builtin.package:
+        name:
+          - git
+        state: present
+
+    - name: Make [m2web_dir]
+      ansible.builtin.file:
+        name: "{{ m2web_dir }}"
+        state: directory
+        owner: root
+        group: m2webdata
+        mode: "0770"
+
+    - name: Create [docker_compose_dir]/m2web
+      ansible.builtin.file:
+        name: "{{ docker_compose_dir }}/m2web"
+        state: directory
+        owner: root
+        group: stacks
+        mode: "750"
+
+    - name: Template in compose file
+      ansible.builtin.template:
+        src: "{{ compose_template }}"
+        dest: "{{ docker_compose_dir }}/m2web/docker-compose.yml"
+        owner: "root"
+        group: "stacks"
+        mode: "0740"
+
+    - name: Template in env file
+      ansible.builtin.template:
+        src: "{{ env_template }}"
+        dest: "{{ docker_compose_dir }}/m2web/.env"
+        owner: "root"
+        group: "stacks"
+        mode: "0740"
+
+    - name: Fetch the m2web dockerfile
+      ansible.builtin.git:
+        repo: "{{ m2web_docker_git }}"
+        dest: "{{ docker_compose_dir }}/m2web/m2web_docker"
+
+    - name: Build the m2web dockerfile
+      community.docker.docker_image_build:
+        name: m2web:latest
+        path: "{{ docker_compose_dir }}/m2web/m2web_docker"
+
+    - name: Start the m2web service
+      community.docker.docker_compose_v2:
+        project_name: m2web
+        project_src: "{{ docker_compose_dir }}/m2web"
+        state: present
+      register: docker_output
+
+    - name: Show results
+      ansible.builtin.debug:
+        var: docker_output
+
+    - name: Shut m2web down
+      community.docker.docker_compose_v2:
+        project_src: "{{ docker_compose_dir }}/qbittorrent"
+        state: stopped
+      when: debug | bool

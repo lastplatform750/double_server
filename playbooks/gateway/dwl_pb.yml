@@ -72,7 +72,7 @@
     - name: Add user to seat and lp (bluetooth) group
       ansible.builtin.user:
         name: "{{ gateway_user }}"
-        groups: 
+        groups:
           - seat
           - lp
         append: true

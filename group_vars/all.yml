@@ -1,6 +1,4 @@
 ---
-debug: false
-
 alpine_release: "3.23"
 alpine_repo_mirror: "https://dl-3.alpinelinux.org/"
 
@@ -21,10 +19,12 @@ server_subnet_ip: 192.168.50.2
 server_internal_ssh_port: 22
 server_external_ssh_port: 2223
 
-anki_port: 8070
-jellyfin_port: 8096
+immich_port: 2283
 navidrome_port: 4533
 paperless_port: 8000
-immich_port: 2283
+m2web_port: 8002
+anki_port: 8070
+jellyfin_port: 8096
+
 qbittorrent_webui_port: 8090
 qbittorrent_torrent_port: 50090

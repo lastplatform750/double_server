@@ -36,7 +36,7 @@
     - name: Print Tailscale status
       ansible.builtin.debug:
         msg: "Tailscale Status: {{ tailscale_status.stdout }}"
-      when: debug
+      when: debug | bool
 
     - name: Start and confirm Tailscale
       when: 'tailscale_status.stdout == "" or "offline" in tailscale_status.stdout'

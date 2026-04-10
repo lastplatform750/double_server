@@ -87,14 +87,17 @@
         group: "{{ main_user }}"
         mode: "700"
 
-- name: Setting up drive pool
-  import_playbook: drive_pb.yml
+# - name: Setting up drive pool
+#   import_playbook: drive_pb.yml
 
-- name: Installing and Configuring Beets
-  import_playbook: beets_pb.yml
+# - name: Installing and Configuring Beets
+#   import_playbook: beets_pb.yml
 
 - name: Installing and Configuring Docker
   import_playbook: docker_pb.yml
+
+- name: Installing and Configuring m2web
+  import_playbook: m2web_pb.yml
 
 - name: Installing and Configuring Qbittorrent
   import_playbook: qbittorrent_pb.yml
