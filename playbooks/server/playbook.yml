@@ -87,11 +87,11 @@
         group: "{{ main_user }}"
         mode: "700"
 
-# - name: Setting up drive pool
-#   import_playbook: drive_pb.yml
+- name: Setting up drive pool
+  import_playbook: drive_pb.yml
 
-# - name: Installing and Configuring Beets
-#   import_playbook: beets_pb.yml
+- name: Installing and Configuring Beets
+  import_playbook: beets_pb.yml
 
 - name: Installing and Configuring Docker
   import_playbook: docker_pb.yml
