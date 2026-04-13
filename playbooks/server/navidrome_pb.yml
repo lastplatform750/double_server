@@ -45,6 +45,7 @@
         project_name: navidrome
         project_src: "{{ docker_compose_dir }}/navidrome"
         state: present
+        pull: always
       register: docker_output
 
     - name: Show results

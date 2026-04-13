@@ -65,6 +65,7 @@
         project_name: immich
         project_src: "{{ docker_compose_dir }}/immich"
         state: present
+        pull: always
       register: docker_output
 
     - name: Show results

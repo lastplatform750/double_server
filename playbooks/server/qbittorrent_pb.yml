@@ -64,6 +64,7 @@
         project_name: qbittorrent
         project_src: "{{ docker_compose_dir }}/qbittorrent"
         state: present
+        pull: always
       register: docker_output
 
     - name: Show results

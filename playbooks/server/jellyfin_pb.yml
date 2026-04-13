@@ -64,6 +64,7 @@
         project_name: jellyfin
         project_src: "{{ docker_compose_dir }}/jellyfin"
         state: present
+        pull: always
       register: docker_output
 
     - name: Show results

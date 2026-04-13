@@ -137,6 +137,7 @@
         project_name: paperless
         project_src: "{{ docker_compose_dir }}/paperless"
         state: present
+        pull: always
       register: docker_output
 
     - name: Show results
