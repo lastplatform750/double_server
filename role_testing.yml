@@ -1,0 +1,95 @@
+---
+- name: Server Setup
+  hosts: server
+  become: true
+
+  vars:
+    stacks_dir: "{{ internal_dirs['stacks']['path'] }}"
+    stacks_owner: "{{ internal_dirs['stacks']['owner'] }}"
+    stacks_group: "{{ internal_dirs['stacks']['group'] }}"
+
+  roles:
+    - role: docker
+    - role: external_drive
+    - role: immich
+      vars:
+        immich_user: "{{ service_users['immich']['name'] }}"
+        srv_data_dir: "{{ internal_dirs['immich_data_dir']['path'] }}"
+        compose_file_url: "{{ immich_compose_file_url }}"
+        env_template: "resources/immich/.env.j2"
+  
+  pre_tasks:
+    - name: Announce debug
+      ansible.builtin.debug:
+        msg: "Debug is enabled!"
+      when: debug | bool
+
+    - name: Template in repository file
+      ansible.builtin.template:
+        src: "{{ repository_template }}"
+        dest: /etc/apk/repositories
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Update system
+      ansible.builtin.package:
+        update_cache: true
+        upgrade: true
+
+    - name: Install rsync
+      ansible.builtin.package:
+        name: rsync
+        state: present
+
+    - name: Create groups
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ server_groups }}"
+
+    - name: "Create user: {{ main_user }}"
+      ansible.builtin.user:
+        name: "{{ main_user }}"
+        state: present
+        groups: "{{ main_user_groups }}"
+        create_home: true
+
+    - name: Create service users
+      ansible.builtin.user:
+        name: "{{ item.value['name'] }}"
+        state: present
+        groups: []
+        create_home: false
+      loop: "{{ service_users | dict2items }}"
+
+    - name: Get group info
+      ansible.builtin.getent:
+        database: group
+        split: ":"
+
+    - name: Make gid dictionary
+      ansible.builtin.set_fact:
+        gid_dict: "{{ gid_dict | default({}) | combine({item.key: item.value[1]}) }}"
+      loop: "{{ ansible_facts['getent_group'] | dict2items }}"
+
+    - name: Get user info
+      ansible.builtin.getent:
+        database: passwd
+        split: ":"
+
+    - name: Make uid dictionary
+      ansible.builtin.set_fact:
+        uid_dict: "{{ uid_dict | default({}) | combine({item.key: item.value[1]}) }}"
+      loop: "{{ ansible_facts['getent_passwd'] | dict2items }}"
+    
+    - name: Set up internal directories
+      ansible.builtin.file:
+        name: "{{ item.value['path'] }}"
+        state: directory
+        owner: "{{ item.value['owner'] }}"
+        group: "{{ item.value['group'] }}"
+        mode: "{{ item.value['mode'] }}"
+        recurse: "{{ item.value['recurse'] }}"
+      loop: "{{ internal_dirs | dict2items }}"
+    

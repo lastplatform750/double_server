@@ -1,11 +1,13 @@
 ---
+repository_template: "resources/server/repositories.j2"
 
-# versions
+## versions ##
 beets_pip_version: "26.0.1"
 
-# MAKE SURE THESE ARE CORRECT DRIVES
+## MAKE SURE THESE ARE CORRECT DRIVES ##
 zfs_pool_devices: "{{ ['sdb', 'sdc', 'sdd', 'sde'] if debug | bool else ['sda', 'sdb'] }}"
 
+## Groups ## 
 main_user_groups:
   - wheel
   - audio
@@ -19,8 +21,6 @@ main_user_groups:
   - stacks
   - m2webdata
 
-external_mount: /mnt/data
-
 server_groups:
   - musicmedia
   - vidmedia
@@ -29,15 +29,58 @@ server_groups:
   - stacks
   - m2webdata
 
-service_users:
-  - anki
-  - paperless
-  - qbittorrent
-  - jellyfin
-  - navidrome
-  - immich
+stacks_group: stacks
 
+## Users ## 
+service_users:
+  anki:
+    name: anki
+  paperless:
+    name: paperless
+  qbittorrent:
+    name: qbittorrent
+  jellyfin:
+    name: jellyfin
+  navidrome:
+    name: navidrome
+  immich:
+    name: immich
+
+## URLS ##
+immich_compose_file_url: "https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml"
+
+## Directories ##
 docker_compose_dir: /opt/stacks
+
+external_mount: /mnt/data
+
+internal_dirs:
+  main_config:
+    path: "/home/{{ main_user }}/.config"
+    state: directory
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: true
+  srv:
+    path: /srv
+    owner: root
+    group: root
+    mode: "0755"
+    recurse: false
+  stacks:
+    path: /opt/stacks
+    owner: root
+    group: stacks
+    mode: "0750"
+    recurse: false
+  immich_data_dir:
+    path: /srv/immich
+    owner: "{{ service_users['immich']['name'] }}"
+    group: "{{ service_users['immich']['name'] }}"
+    mode: "0700"
+    recurse: true
+  
 
 external_dirs:
   vid:
@@ -118,3 +161,24 @@ external_dirs:
     group: immich
     mode: "0700"
     recurse: false
+
+## Volumes ##
+immich_volumes:
+  pic:
+    host: "{{ external_dirs['pic']['path'] }}"
+    dest: "{{ external_dirs['pic']['path'] }}"
+    flags: ":ro"
+
+## ZFS Options ##
+zfs_pool_name: data
+zfs_pool_mountpoint: "{{ external_mount }}"
+zfs_pool_mode:
+zfs_pool_state: present
+zfs_pool_options:
+  - "ashift=12"
+zfs_boot_services:
+  - zfs-import
+  - zfs-mount
+  - zfs-load-key
+zfs_default_services:
+  - zfs-zed
