@@ -1,6 +1,4 @@
 ---
-repository_template: "resources/server/repositories.j2"
-
 ## versions ##
 beets_pip_version: "26.0.1"
 
@@ -49,6 +47,10 @@ service_users:
 ## URLS ##
 immich_compose_file_url: "https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml"
 
+paperless_compose_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/docker-compose.sqlite-tika.yml"
+paperless_compose_env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/docker-compose.env"
+paperless_env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/.env"
+
 ## Directories ##
 docker_compose_dir: /opt/stacks
 
@@ -57,7 +59,6 @@ external_mount: /mnt/data
 internal_dirs:
   main_config:
     path: "/home/{{ main_user }}/.config"
-    state: directory
     owner: "{{ main_user }}"
     group: "{{ main_user }}"
     mode: "0700"
@@ -86,6 +87,36 @@ internal_dirs:
     group: "{{ service_users['navidrome']['name'] }}"
     mode: "0750"
     recurse: true
+  paperless_srv_dir:
+    path: /srv/paperless
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "700"
+    recurse: true
+  paperless_srv_data_dir:
+    path: /srv/paperless/data
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "700"
+    recurse: true
+  paperless_srv_media_dir:
+    path: /srv/paperless/media
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "700"
+    recurse: true
+  paperless_srv_export_dir:
+    path: /srv/paperless/export
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "700"
+    recurse: true
+  paperless_srv_consume_dir:
+    path: /srv/paperless/consume
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "700"
+    recurse: true
   jellyfin_srv_dir:
     path: /srv/jellyfin
     owner: "{{ service_users['jellyfin']['name'] }}"
@@ -99,11 +130,10 @@ internal_dirs:
     mode: "0700"
     recurse: true
   jellyfin_srv_cache_dir:
-    path: "/srv/jellyfin/cache"
-    state: directory
+    path: /srv/jellyfin/cache
     owner: "{{ service_users['jellyfin']['name'] }}"
     group: "{{ service_users['jellyfin']['name'] }}"
-    mode: "0750"
+    mode: "0700"
     recurse: true
 
 

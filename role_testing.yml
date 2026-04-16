@@ -11,6 +11,15 @@
   roles:
     - role: docker
     - role: external_drive
+    - role: paperless
+      vars:
+        paperless_user: "{{ service_users['paperless']['name'] }}"
+        paperless_user_uid: "{{ uid_dict[paperless_user] }}"
+        paperless_user_gid: "{{ gid_dict[paperless_user] }}"
+        srv_data_dir: "{{ internal_dirs['paperless_srv_data_dir']['path'] }}"
+        srv_media_dir: "{{ internal_dirs['paperless_srv_media_dir']['path'] }}"
+        srv_export_dir: "{{ internal_dirs['paperless_srv_export_dir']['path'] }}"
+        srv_consume_dir: "{{ internal_dirs['paperless_srv_consume_dir']['path'] }}"
     - role: navidrome
       vars:
         navidrome_user: "{{ service_users['navidrome']['name'] }}"

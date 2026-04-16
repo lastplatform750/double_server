@@ -1,4 +1,3 @@
 ---
-
 wan_iface: wlan0
 lan_iface: eth0
