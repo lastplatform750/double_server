@@ -11,6 +11,13 @@
   roles:
     - role: docker
     - role: external_drive
+    - role: navidrome
+      vars:
+        navidrome_user: "{{ service_users['navidrome']['name'] }}"
+        navidrome_user_uid: "{{ uid_dict[navidrome_user] }}"
+        navidrome_user_gid: "{{ gid_dict[navidrome_user] }}"
+        musicmedia_gid: "{{ gid_dict['musicmedia'] }}"
+        
     - role: jellyfin
       vars:
         jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
@@ -35,7 +42,7 @@
 
     - name: Template in repository file
       ansible.builtin.template:
-        src: "{{ repository_template }}"
+        src: repositories.j2
         dest: /etc/apk/repositories
         owner: root
         group: root

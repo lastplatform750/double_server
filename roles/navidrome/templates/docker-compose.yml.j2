@@ -9,5 +9,3 @@ services:
       - "${NAVIDROME_PORT}:${NAVIDROME_PORT}"
     restart: unless-stopped
     volumes:
-      - "/srv/navidrome:/data"
-      - "${MUSIC_TAGGED_DIR}:/music:ro"

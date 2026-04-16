@@ -78,13 +78,19 @@ internal_dirs:
     path: /srv/immich
     owner: "{{ service_users['immich']['name'] }}"
     group: "{{ service_users['immich']['name'] }}"
-    mode: "0700"
+    mode: "0750"
+    recurse: true
+  navidrome_srv_dir:
+    path: /srv/navidrome
+    owner: "{{ service_users['navidrome']['name'] }}"
+    group: "{{ service_users['navidrome']['name'] }}"
+    mode: "0750"
     recurse: true
   jellyfin_srv_dir:
     path: /srv/jellyfin
     owner: "{{ service_users['jellyfin']['name'] }}"
     group: "{{ service_users['jellyfin']['name'] }}"
-    mode: "0700"
+    mode: "0750"
     recurse: true
   jellyfin_srv_config_dir:
     path: "/srv/jellyfin/config"
@@ -200,6 +206,16 @@ jellyfin_volumes:
   vid:
     host: "{{ external_dirs['vid']['path'] }}"
     dest: /vid
+    flags: ":ro"
+
+navidrome_volumes:
+  data:
+    host: "{{ internal_dirs['navidrome_srv_dir']['path'] }}"
+    dest: /data
+    flags: ""
+  musid:
+    host: "{{ external_dirs['music_tagged']['path'] }}"
+    dest: /music
     flags: ":ro"
 
 
