@@ -11,13 +11,22 @@
   roles:
     - role: docker
     - role: external_drive
+    - role: jellyfin
+      vars:
+        jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
+        jellyfin_user_uid: "{{ uid_dict[jellyfin_user] }}"
+        jellyfin_user_gid: "{{ gid_dict[jellyfin_user] }}"
+        vidmedia_gid: "{{ gid_dict['vidmedia'] }}"
     - role: immich
       vars:
         immich_user: "{{ service_users['immich']['name'] }}"
-        srv_data_dir: "{{ internal_dirs['immich_data_dir']['path'] }}"
-        compose_file_url: "{{ immich_compose_file_url }}"
-        env_template: "resources/immich/.env.j2"
-  
+        immich_user_uid: "{{ uid_dict[immich_user] }}"
+        immich_user_gid: "{{ gid_dict[immich_user] }}"
+        picmedia_gid: "{{ gid_dict['picmedia'] }}"
+        srv_dir: "{{ internal_dirs['immich_srv_dir']['path'] }}"
+        extern_dir: "{{ external_dirs['pic']['path'] }}"
+    
+
   pre_tasks:
     - name: Announce debug
       ansible.builtin.debug:

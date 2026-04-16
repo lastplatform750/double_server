@@ -74,13 +74,32 @@ internal_dirs:
     group: stacks
     mode: "0750"
     recurse: false
-  immich_data_dir:
+  immich_srv_dir:
     path: /srv/immich
     owner: "{{ service_users['immich']['name'] }}"
     group: "{{ service_users['immich']['name'] }}"
     mode: "0700"
     recurse: true
-  
+  jellyfin_srv_dir:
+    path: /srv/jellyfin
+    owner: "{{ service_users['jellyfin']['name'] }}"
+    group: "{{ service_users['jellyfin']['name'] }}"
+    mode: "0700"
+    recurse: true
+  jellyfin_srv_config_dir:
+    path: "/srv/jellyfin/config"
+    owner: "{{ service_users['jellyfin']['name'] }}"
+    group: "{{ service_users['jellyfin']['name'] }}"
+    mode: "0700"
+    recurse: true
+  jellyfin_srv_cache_dir:
+    path: "/srv/jellyfin/cache"
+    state: directory
+    owner: "{{ service_users['jellyfin']['name'] }}"
+    group: "{{ service_users['jellyfin']['name'] }}"
+    mode: "0750"
+    recurse: true
+
 
 external_dirs:
   vid:
@@ -168,6 +187,21 @@ immich_volumes:
     host: "{{ external_dirs['pic']['path'] }}"
     dest: "{{ external_dirs['pic']['path'] }}"
     flags: ":ro"
+
+jellyfin_volumes:
+  config:
+    host: "{{ internal_dirs['jellyfin_srv_config_dir']['path'] }}"
+    dest: /config
+    flags: ""
+  cache:
+    host: "{{ internal_dirs['jellyfin_srv_cache_dir']['path'] }}"
+    dest: /cache
+    flags: ""
+  vid:
+    host: "{{ external_dirs['vid']['path'] }}"
+    dest: /vid
+    flags: ":ro"
+
 
 ## ZFS Options ##
 zfs_pool_name: data

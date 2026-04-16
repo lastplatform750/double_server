@@ -1,0 +1,50 @@
+---
+- name: "Create {{ stacks_dir }}/jellyfin"
+  ansible.builtin.file:
+    name: "{{ stacks_dir }}/jellyfin"
+    state: directory
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_group }}"
+    mode: "0750"
+
+- name: Template in docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ stacks_dir }}/jellyfin/docker-compose.yml"
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_owner }}"
+    mode: "0700"
+
+- name: Template in .env
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ stacks_dir }}/jellyfin/.env"
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_owner }}"
+    mode: "0700"
+  
+- name: Add external volumes to jellyfin server
+  ansible.builtin.lineinfile:
+    path: "{{ stacks_dir }}/jellyfin/docker-compose.yml"
+    insertafter: "^\\s{4}volumes:$"
+    line: "      - {{ item.value['host'] }}:{{ item.value['dest'] }}{{ item.value['flags'] }}"
+    state: present
+  loop: "{{ jellyfin_volumes | dict2items }}"
+
+- name: Start the jellyfin service
+  community.docker.docker_compose_v2:
+    project_name: jellyfin
+    project_src: "{{ stacks_dir }}/jellyfin"
+    state: present
+    pull: always
+  register: docker_output
+
+- name: Show results
+  ansible.builtin.debug:
+    var: docker_output
+
+- name: Shut jellyfin down
+  community.docker.docker_compose_v2:
+    project_src: "{{ stacks_dir }}/jellyfin"
+    state: stopped
+  when: debug | bool

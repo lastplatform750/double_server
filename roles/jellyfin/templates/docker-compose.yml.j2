@@ -9,6 +9,3 @@ services:
       - "${JELLYFIN_PORT}:${JELLYFIN_PORT}"
     restart: unless-stopped
     volumes:
-      - "/srv/jellyfin/config:/config"
-      - "/srv/jellyfin/cache:/cache"
-      - "${VID_DIR}:/vid:ro"
