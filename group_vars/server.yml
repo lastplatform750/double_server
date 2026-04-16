@@ -81,6 +81,12 @@ internal_dirs:
     group: "{{ service_users['immich']['name'] }}"
     mode: "0750"
     recurse: true
+  qbittorrent_srv_dir:
+    path: /srv/qbittorrent
+    owner: "{{ service_users['qbittorrent']['name'] }}"
+    group: "{{ service_users['qbittorrent']['name'] }}"
+    mode: "0700"
+    recurse: true
   navidrome_srv_dir:
     path: /srv/navidrome
     owner: "{{ service_users['navidrome']['name'] }}"

@@ -1,0 +1,84 @@
+---
+- name: Attempt to add tun module
+  block:
+    - name: First attempt to add the tun module
+      community.general.modprobe:
+        name: tun
+        state: present
+        persistent: present
+  rescue:
+    - name: Couldn't add the tun module, rebooting
+      ansible.builtin.reboot:
+        reboot_timeout: 120
+    - name: Second attempt to add the tun module
+      community.general.modprobe:
+        name: tun
+        state: present
+        persistent: present
+
+- name: "Create {{ stacks_dir }}/qbittorrent"
+  ansible.builtin.file:
+    name: "{{ stacks_dir }}/qbittorrent"
+    state: directory
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_group }}"
+    mode: "0750"
+
+- name: Template in docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ stacks_dir }}/qbittorrent/docker-compose.yml"
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_owner }}"
+    mode: "0700"
+
+- name: Template in .env
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ stacks_dir }}/qbittorrent/.env"
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_owner }}"
+    mode: "0700"
+
+- name: Start the qbittorrent service
+  community.docker.docker_compose_v2:
+    project_name: qbittorrent
+    project_src: "{{ stacks_dir }}/qbittorrent"
+    state: present
+    pull: always
+  register: docker_output
+
+- name: Show results
+  ansible.builtin.debug:
+    var: docker_output
+
+- name: Read qBittorrent logs
+  ansible.builtin.command:
+    cmd: docker compose logs
+  args:
+    chdir: "{{ stacks_dir }}/qbittorrent"
+  register: qbittorrent_logs
+  changed_when: false
+
+- name: Extract all matching password lines
+  ansible.builtin.set_fact:
+    qbittorrent_password_lines: >-
+      {{
+        qbittorrent_logs.stdout
+        | regex_findall('^.*temporary.*$', multiline=True)
+      }}
+
+- name: Save the last matching password line to localhost
+  ansible.builtin.copy:
+    dest: "qbittorrent-temp-password-line.txt"
+    mode: "0600"
+    content: >-
+      {{ qbittorrent_password_lines[-1] if qbittorrent_password_lines | length > 0 else 'NOT FOUND' }}
+  delegate_to: localhost
+  become: false
+
+- name: Shut qbittorrent down
+  community.docker.docker_compose_v2:
+    project_src: "{{ stacks_dir }}/qbittorrent"
+    state: stopped
+  when: debug | bool

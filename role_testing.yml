@@ -8,9 +8,23 @@
     stacks_owner: "{{ internal_dirs['stacks']['owner'] }}"
     stacks_group: "{{ internal_dirs['stacks']['group'] }}"
 
+    musicmedia_gid: "{{ gid_dict['musicmedia'] }}"
+    vidmedia_gid: "{{ gid_dict['vidmedia'] }}"
+    othermedia_gid: "{{ gid_dict['othermedia'] }}"
+
   roles:
     - role: docker
     - role: external_drive
+    - role: qbittorrent
+      vars:
+        qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"
+        qbittorrent_user_uid: "{{ uid_dict[qbittorrent_user] }}"
+        qbittorrent_user_gid: "{{ gid_dict[qbittorrent_user] }}"
+        srv_dir: "{{ internal_dirs['qbittorrent_srv_dir']['path'] }}"
+        qtmp_path: "{{ external_dirs['qtmp']['path'] }}"
+        music_untagged_path: "{{ external_dirs['music_untagged']['path'] }}"
+        vid_path: "{{ external_dirs['vid']['path'] }}"
+        other_path: "{{ external_dirs['other']['path'] }}"
     - role: paperless
       vars:
         paperless_user: "{{ service_users['paperless']['name'] }}"
@@ -25,7 +39,7 @@
         navidrome_user: "{{ service_users['navidrome']['name'] }}"
         navidrome_user_uid: "{{ uid_dict[navidrome_user] }}"
         navidrome_user_gid: "{{ gid_dict[navidrome_user] }}"
-        musicmedia_gid: "{{ gid_dict['musicmedia'] }}"
+        
         
     - role: jellyfin
       vars:
