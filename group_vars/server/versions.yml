@@ -1,0 +1,5 @@
+---
+## Versions ##
+beets_pip_version: "26.0.1"
+beets_setuptools_version: "81"
+beets_llvm_version: "20"

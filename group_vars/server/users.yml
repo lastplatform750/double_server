@@ -1,0 +1,15 @@
+---
+## Users ##
+service_users:
+  anki:
+    name: anki
+  paperless:
+    name: paperless
+  qbittorrent:
+    name: qbittorrent
+  jellyfin:
+    name: jellyfin
+  navidrome:
+    name: navidrome
+  immich:
+    name: immich

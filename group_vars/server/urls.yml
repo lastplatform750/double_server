@@ -1,0 +1,9 @@
+---
+## URLS ##
+immich_compose_file_url: "https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml"
+
+paperless_compose_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/docker-compose.sqlite-tika.yml"
+paperless_compose_env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/docker-compose.env"
+paperless_env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/.env"
+
+m2web_docker_git_url: "https://github.com/lastplatform750/m2web_docker"

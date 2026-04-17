@@ -1,0 +1,24 @@
+---
+## Groups ##
+main_user_groups:
+  - wheel
+  - audio
+  - input
+  - video
+  - netdev
+  - musicmedia
+  - vidmedia
+  - picmedia
+  - othermedia
+  - stacks
+  - m2webdata
+
+server_groups:
+  - musicmedia
+  - vidmedia
+  - picmedia
+  - othermedia
+  - stacks
+  - m2webdata
+
+stacks_group: stacks

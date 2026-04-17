@@ -23,19 +23,19 @@
   roles:
     - role: docker
     - role: external_drive
-    # - role: beets
-    #   vars:
-    #     beets_data_dir: "{{ external_dirs['beets']['path'] }}"
-    #     beets_music_tagged_dir: "{{ external_dirs['music_tagged']['path'] }}"
-    #     beets_install_dir: "{{ internal_dirs['beets_install']['path'] }}"
-    #     beets_config_dir: "{{ internal_dirs['beets_config']['path'] }}"
+    - role: beets
+      vars:
+        beets_data_dir: "{{ external_dirs['beets']['path'] }}"
+        beets_music_tagged_dir: "{{ external_dirs['music_tagged']['path'] }}"
+        beets_install_dir: "{{ internal_dirs['beets_install']['path'] }}"
+        beets_config_dir: "{{ internal_dirs['beets_config']['path'] }}"
     - role: anki
       vars:
         anki_user: "{{ service_users['anki']['name'] }}"
         anki_srv_dir: "{{ internal_dirs['anki_srv_dir']['path'] }}"
-    # - role: m2web
-    #   vars:
-    #     m2web_srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
+    - role: m2web
+      vars:
+        m2web_srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
     - role: qbittorrent
       vars:
         qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"

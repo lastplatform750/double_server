@@ -55,4 +55,4 @@
   community.docker.docker_compose_v2:
     project_src: "{{ stacks_dir }}/immich"
     state: stopped
-  when: shutdown | bool
+  when: debug | bool
