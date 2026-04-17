@@ -1,6 +1,8 @@
 ---
 ## versions ##
 beets_pip_version: "26.0.1"
+beets_setuptools_version: "81"
+beets_llvm_version: "20"
 
 ## MAKE SURE THESE ARE CORRECT DRIVES ##
 zfs_pool_devices: "{{ ['sdb', 'sdc', 'sdd', 'sde'] if debug | bool else ['sda', 'sdb'] }}"
@@ -61,6 +63,18 @@ external_mount: /mnt/data
 internal_dirs:
   main_config:
     path: "/home/{{ main_user }}/.config"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: true
+  beets_config:
+    path: "/home/{{ main_user }}/.config/beets"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: true
+  beets_install:
+    path: /opt/beets
     owner: "{{ main_user }}"
     group: "{{ main_user }}"
     mode: "0700"

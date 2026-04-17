@@ -1,7 +1,7 @@
 # beets config file
 
-directory: "{{ external_dirs['music_tagged']['path'] }}"
-library: "{{ external_dirs['beets']['path'] }}/library.db"
+directory: "{{ music_tagged_dir }}"
+library: "{{ data_dir }}/library.db"
 
 artist_filename: cover
 threaded: yes
@@ -56,7 +56,7 @@ embedart:
 convert:
    format: flac
    auto: yes
-   tmpdir: "{{ external_mount }}/beets/tmp"
+   tmpdir: "{{ data_dir }}/tmp"
    no_convert: ^path::\.(wma)$
    delete_originals: no
 

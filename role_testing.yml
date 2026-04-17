@@ -16,6 +16,12 @@
   roles:
     - role: docker
     - role: external_drive
+    - role: beets
+      vars:
+        data_dir: "{{ external_dirs['beets']['path'] }}"
+        music_tagged_dir: "{{ external_dirs['music_tagged']['path'] }}"
+        install_dir: "{{ internal_dirs['beets_install']['path'] }}"
+        config_dir: "{{ internal_dirs['beets_config']['path'] }}"
     - role: anki
       vars:
         anki_user: "{{ service_users['anki']['name'] }}"

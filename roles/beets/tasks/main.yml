@@ -1,0 +1,48 @@
+---
+- name: Install dependencies
+  ansible.builtin.package:
+    name:
+      - py3-pip
+      - python3-dev
+      - gstreamer
+      - build-base
+      - cmake
+      - "llvm{{ beets_llvm_version }}-dev"
+      - "llvm{{ beets_llvm_version }}-static"
+      - "llvm{{ beets_llvm_version }}-gtest"
+    state: present
+
+- name: Template in build-constraints
+  ansible.builtin.template:
+    src: build-constraints.txt.j2
+    dest: /tmp/build-constraints.txt
+    mode: "0600"
+
+- name: Update pip in virtual env
+  ansible.builtin.pip:
+    name: pip
+    virtualenv: "{{ install_dir }}/venv"
+    virtualenv_command: "python3 -m venv"
+    version: "{{ beets_pip_version }}"
+    state: present
+
+- name: Template the beets config
+  ansible.builtin.template:
+    src: config.yml.j2
+    dest: "{{ config_dir }}/config.yaml"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+
+- name: Install beets
+  ansible.builtin.pip:
+    name: beets[fetchart,chroma]
+    extra_args: --build-constraint /tmp/build-constraints.txt
+    virtualenv: "{{ install_dir }}/venv"
+    virtualenv_command: "python3 -m venv"
+    state: present
+
+- name: Remove build constraints
+  ansible.builtin.file:
+    name: "/tmp/build-constraints.txt"
+    state: absent
