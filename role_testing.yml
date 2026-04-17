@@ -16,6 +16,10 @@
   roles:
     - role: docker
     - role: external_drive
+    - role: anki
+      vars:
+        anki_user: "{{ service_users['anki']['name'] }}"
+        srv_dir: "{{ internal_dirs['anki_srv_dir']['path'] }}"
     - role: m2web
       vars:
         srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
@@ -43,8 +47,6 @@
         navidrome_user: "{{ service_users['navidrome']['name'] }}"
         navidrome_user_uid: "{{ uid_dict[navidrome_user] }}"
         navidrome_user_gid: "{{ gid_dict[navidrome_user] }}"
-        
-        
     - role: jellyfin
       vars:
         jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
@@ -59,7 +61,6 @@
         picmedia_gid: "{{ gid_dict['picmedia'] }}"
         srv_dir: "{{ internal_dirs['immich_srv_dir']['path'] }}"
         extern_dir: "{{ external_dirs['pic']['path'] }}"
-    
 
   pre_tasks:
     - name: Announce debug

@@ -65,6 +65,12 @@ internal_dirs:
     group: "{{ main_user }}"
     mode: "0700"
     recurse: true
+  anki_etc_dir:
+    path: /etc/anki
+    owner: "{{ service_users['anki']['name'] }}"
+    group: "{{ service_users['anki']['name'] }}"
+    mode: "0700"
+    recurse: true
   srv:
     path: /srv
     owner: root
@@ -77,11 +83,17 @@ internal_dirs:
     group: stacks
     mode: "0750"
     recurse: false
+  anki_srv_dir:
+    path: /srv/anki
+    owner: "{{ service_users['anki']['name'] }}"
+    group: "{{ service_users['anki']['name'] }}"
+    mode: "0700"
+    recurse: true
   immich_srv_dir:
     path: /srv/immich
     owner: "{{ service_users['immich']['name'] }}"
     group: "{{ service_users['immich']['name'] }}"
-    mode: "0750"
+    mode: "0700"
     recurse: true
   m2web_srv_dir: 
     path: /srv/m2web
@@ -99,7 +111,7 @@ internal_dirs:
     path: /srv/navidrome
     owner: "{{ service_users['navidrome']['name'] }}"
     group: "{{ service_users['navidrome']['name'] }}"
-    mode: "0750"
+    mode: "0700"
     recurse: true
   paperless_srv_dir:
     path: /srv/paperless
@@ -135,7 +147,7 @@ internal_dirs:
     path: /srv/jellyfin
     owner: "{{ service_users['jellyfin']['name'] }}"
     group: "{{ service_users['jellyfin']['name'] }}"
-    mode: "0750"
+    mode: "0700"
     recurse: true
   jellyfin_srv_config_dir:
     path: "/srv/jellyfin/config"

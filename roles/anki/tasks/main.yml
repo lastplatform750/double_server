@@ -1,0 +1,27 @@
+---
+- name: Template in service env
+  ansible.builtin.template:
+    src: env.sh.j2
+    dest: /etc/conf.d/anki
+    owner: root
+    group: root
+    mode: "0550"
+
+- name: Template in service file
+  ansible.builtin.template:
+    src: anki.sh.j2
+    dest: /etc/init.d/anki
+    owner: root
+    group: root
+    mode: "0550"
+
+- name: Install Anki
+  ansible.builtin.package:
+    name: anki
+    state: present
+
+- name: Make sure Anki daemon is running
+  ansible.builtin.service:
+    name: anki
+    state: started
+    enabled: true
