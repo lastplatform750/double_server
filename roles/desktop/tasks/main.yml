@@ -1,0 +1,98 @@
+---
+- name: Install dependencies
+  ansible.builtin.package:
+    name: "{{ desktop_dependencies | join(',') }}"
+    state: present
+
+- name: Add user to seat and lp (bluetooth) group
+  ansible.builtin.user:
+    name: "{{ gateway_user }}"
+    groups:
+      - seat
+      - lp
+    append: true
+
+- name: Make build directory
+  ansible.builtin.file:
+    name: "/home/{{ gateway_user }}/build"
+    owner: "{{ gateway_user }}"
+    group: "{{ gateway_user }}"
+    mode: "0700"
+    state: directory
+
+- name: Fetch the source
+  ansible.builtin.get_url:
+    url: "{{ desktop_dwl_git_url }}"
+    dest: "/home/{{ gateway_user }}/build/dwl.tar"
+    decompress: true
+    owner: "{{ gateway_user }}"
+    group: "{{ gateway_user }}"
+    mode: "0700"
+
+- name: Untar the source
+  ansible.builtin.unarchive:
+    src: "/home/{{ gateway_user }}/build/dwl.tar"
+    dest: "/home/{{ gateway_user }}/build"
+    owner: "{{ gateway_user }}"
+    group: "{{ gateway_user }}"
+    mode: "0700"
+    remote_src: true
+
+- name: Build and install dwl
+  community.general.make:
+    chdir: "/home/{{ gateway_user }}/build/dwl-v{{ desktop_dwl_release }}"
+    target: install
+  become: true
+
+- name: Template in dwl launcher script
+  ansible.builtin.template:
+    src: dwl.sh.j2
+    dest: /usr/local/bin/s
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Start and enable seat daemon
+  ansible.builtin.service:
+    name: seatd
+    state: started
+    enabled: true
+
+- name: Template in kernel settings
+  ansible.builtin.template:
+    src: usercfg.txt.j2
+    dest: /boot/usercfg.txt
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Setup udev
+  ansible.builtin.command:
+    cmd: setup-devd udev
+
+## wbg section ##
+
+- name: Get the wbg source
+  ansible.builtin.git:
+    repo: "{{ desktop_wbg_git_url }}"
+    dest: "/home/{{ gateway_user }}/build/wbg"
+
+- name: Make and install wbg
+  ansible.builtin.shell:
+    cmd: meson --buildtype=release build && ninja -C build && ninja -C build install
+    chdir: "/home/{{ gateway_user }}/build/wbg"
+
+- name: Template in autostart script
+  ansible.builtin.template:
+    src: autostart.sh.j2
+    dest: /usr/local/bin/autostart.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+## bluetooth section ##
+- name: Start and enable bluetooth daemon
+  ansible.builtin.service:
+    name: bluetooth
+    state: started
+    enabled: true

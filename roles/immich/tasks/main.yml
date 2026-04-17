@@ -49,7 +49,7 @@
 
 - name: Show results
   ansible.builtin.debug:
-    var: ommich_docker_output
+    var: immich_docker_output
 
 - name: Shut immich down
   community.docker.docker_compose_v2:
