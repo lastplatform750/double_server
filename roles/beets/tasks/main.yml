@@ -21,7 +21,7 @@
 - name: Update pip in virtual env
   ansible.builtin.pip:
     name: pip
-    virtualenv: "{{ install_dir }}/venv"
+    virtualenv: "{{ beets_install_dir }}/venv"
     virtualenv_command: "python3 -m venv"
     version: "{{ beets_pip_version }}"
     state: present
@@ -29,7 +29,7 @@
 - name: Template the beets config
   ansible.builtin.template:
     src: config.yml.j2
-    dest: "{{ config_dir }}/config.yaml"
+    dest: "{{ beets_config_dir }}/config.yaml"
     owner: "{{ main_user }}"
     group: "{{ main_user }}"
     mode: "0700"
@@ -38,7 +38,7 @@
   ansible.builtin.pip:
     name: beets[fetchart,chroma]
     extra_args: --build-constraint /tmp/build-constraints.txt
-    virtualenv: "{{ install_dir }}/venv"
+    virtualenv: "{{ beets_install_dir }}/venv"
     virtualenv_command: "python3 -m venv"
     state: present
 

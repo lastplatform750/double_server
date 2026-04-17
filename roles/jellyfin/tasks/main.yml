@@ -1,5 +1,5 @@
 ---
-- name: "Create {{ stacks_dir }}/jellyfin"
+- name: Create jellyfin stacks dir
   ansible.builtin.file:
     name: "{{ stacks_dir }}/jellyfin"
     state: directory
@@ -22,7 +22,7 @@
     owner: "{{ stacks_owner }}"
     group: "{{ stacks_owner }}"
     mode: "0700"
-  
+
 - name: Add external volumes to jellyfin server
   ansible.builtin.lineinfile:
     path: "{{ stacks_dir }}/jellyfin/docker-compose.yml"
@@ -37,11 +37,11 @@
     project_src: "{{ stacks_dir }}/jellyfin"
     state: present
     pull: always
-  register: docker_output
+  register: jellyfin_docker_output
 
 - name: Show results
   ansible.builtin.debug:
-    var: docker_output
+    var: jellyfin_docker_output
 
 - name: Shut jellyfin down
   community.docker.docker_compose_v2:

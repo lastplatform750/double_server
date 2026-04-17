@@ -10,44 +10,47 @@
 
     musicmedia_gid: "{{ gid_dict['musicmedia'] }}"
     vidmedia_gid: "{{ gid_dict['vidmedia'] }}"
+    picmedia_gid: "{{ gid_dict['picmedia'] }}"
     othermedia_gid: "{{ gid_dict['othermedia'] }}"
     m2webdata_gid: "{{ gid_dict['m2webdata'] }}"
+
+    qtmp_path: "{{ external_dirs['qtmp']['path'] }}"
+    music_untagged_path: "{{ external_dirs['music_untagged']['path'] }}"
+    vid_path: "{{ external_dirs['vid']['path'] }}"
+    pic_path: "{{ external_dirs['pic']['path'] }}"
+    other_path: "{{ external_dirs['other']['path'] }}"
 
   roles:
     - role: docker
     - role: external_drive
     - role: beets
       vars:
-        data_dir: "{{ external_dirs['beets']['path'] }}"
-        music_tagged_dir: "{{ external_dirs['music_tagged']['path'] }}"
-        install_dir: "{{ internal_dirs['beets_install']['path'] }}"
-        config_dir: "{{ internal_dirs['beets_config']['path'] }}"
+        beets_data_dir: "{{ external_dirs['beets']['path'] }}"
+        beets_music_tagged_dir: "{{ external_dirs['music_tagged']['path'] }}"
+        beets_install_dir: "{{ internal_dirs['beets_install']['path'] }}"
+        beets_config_dir: "{{ internal_dirs['beets_config']['path'] }}"
     - role: anki
       vars:
         anki_user: "{{ service_users['anki']['name'] }}"
-        srv_dir: "{{ internal_dirs['anki_srv_dir']['path'] }}"
+        anki_srv_dir: "{{ internal_dirs['anki_srv_dir']['path'] }}"
     - role: m2web
       vars:
-        srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
+        m2web_srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
     - role: qbittorrent
       vars:
         qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"
         qbittorrent_user_uid: "{{ uid_dict[qbittorrent_user] }}"
         qbittorrent_user_gid: "{{ gid_dict[qbittorrent_user] }}"
-        srv_dir: "{{ internal_dirs['qbittorrent_srv_dir']['path'] }}"
-        qtmp_path: "{{ external_dirs['qtmp']['path'] }}"
-        music_untagged_path: "{{ external_dirs['music_untagged']['path'] }}"
-        vid_path: "{{ external_dirs['vid']['path'] }}"
-        other_path: "{{ external_dirs['other']['path'] }}"
+        qbittorrent_srv_dir: "{{ internal_dirs['qbittorrent_srv_dir']['path'] }}"
     - role: paperless
       vars:
         paperless_user: "{{ service_users['paperless']['name'] }}"
         paperless_user_uid: "{{ uid_dict[paperless_user] }}"
         paperless_user_gid: "{{ gid_dict[paperless_user] }}"
-        srv_data_dir: "{{ internal_dirs['paperless_srv_data_dir']['path'] }}"
-        srv_media_dir: "{{ internal_dirs['paperless_srv_media_dir']['path'] }}"
-        srv_export_dir: "{{ internal_dirs['paperless_srv_export_dir']['path'] }}"
-        srv_consume_dir: "{{ internal_dirs['paperless_srv_consume_dir']['path'] }}"
+        paperless_srv_data_dir: "{{ internal_dirs['paperless_srv_data_dir']['path'] }}"
+        paperless_srv_media_dir: "{{ internal_dirs['paperless_srv_media_dir']['path'] }}"
+        paperless_srv_export_dir: "{{ internal_dirs['paperless_srv_export_dir']['path'] }}"
+        paperless_srv_consume_dir: "{{ internal_dirs['paperless_srv_consume_dir']['path'] }}"
     - role: navidrome
       vars:
         navidrome_user: "{{ service_users['navidrome']['name'] }}"
@@ -58,15 +61,12 @@
         jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
         jellyfin_user_uid: "{{ uid_dict[jellyfin_user] }}"
         jellyfin_user_gid: "{{ gid_dict[jellyfin_user] }}"
-        vidmedia_gid: "{{ gid_dict['vidmedia'] }}"
     - role: immich
       vars:
         immich_user: "{{ service_users['immich']['name'] }}"
         immich_user_uid: "{{ uid_dict[immich_user] }}"
         immich_user_gid: "{{ gid_dict[immich_user] }}"
-        picmedia_gid: "{{ gid_dict['picmedia'] }}"
-        srv_dir: "{{ internal_dirs['immich_srv_dir']['path'] }}"
-        extern_dir: "{{ external_dirs['pic']['path'] }}"
+        immich_srv_dir: "{{ internal_dirs['immich_srv_dir']['path'] }}"
 
   pre_tasks:
     - name: Announce debug
@@ -98,7 +98,7 @@
         state: present
       loop: "{{ server_groups }}"
 
-    - name: "Create user: {{ main_user }}"
+    - name: "Create main user"
       ansible.builtin.user:
         name: "{{ main_user }}"
         state: present
@@ -132,7 +132,7 @@
       ansible.builtin.set_fact:
         uid_dict: "{{ uid_dict | default({}) | combine({item.key: item.value[1]}) }}"
       loop: "{{ ansible_facts['getent_passwd'] | dict2items }}"
-    
+
     - name: Set up internal directories
       ansible.builtin.file:
         name: "{{ item.value['path'] }}"
@@ -142,4 +142,3 @@
         mode: "{{ item.value['mode'] }}"
         recurse: "{{ item.value['recurse'] }}"
       loop: "{{ internal_dirs | dict2items }}"
-    

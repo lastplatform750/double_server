@@ -1,43 +1,43 @@
 ---
-  - name: Ensure "{{ stacks_dir }}"
-    ansible.builtin.file:
-      name: "{{ stacks_dir }}"
-      state: directory
-      owner: "{{ stacks_owner }}"
-      group: "{{ stacks_group }}"
-      mode: "0750"
+- name: Create stacks dir
+  ansible.builtin.file:
+    name: "{{ stacks_dir }}"
+    state: directory
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_group }}"
+    mode: "0750"
 
-  - name: Attempt to add veth module
-    block:
-      - name: First attempt to add the veth module
-        community.general.modprobe:
-          name: veth
-          state: present
-          persistent: present
-    rescue:
-      - name: Couldn't add the veth module, rebooting
-        ansible.builtin.reboot:
-          reboot_timeout: 120
-      - name: Second attempt to add the veth module
-        community.general.modprobe:
-          name: veth
-          state: present
-          persistent: present
+- name: Attempt to add veth module
+  block:
+    - name: First attempt to add the veth module
+      community.general.modprobe:
+        name: veth
+        state: present
+        persistent: present
+  rescue:
+    - name: Couldn't add the veth module, rebooting
+      ansible.builtin.reboot:
+        reboot_timeout: 120
+    - name: Second attempt to add the veth module
+      community.general.modprobe:
+        name: veth
+        state: present
+        persistent: present
 
-  - name: Install Docker
-    ansible.builtin.package:
-      name: docker
-      state: present
-      update_cache: true
+- name: Install Docker
+  ansible.builtin.package:
+    name: docker
+    state: present
+    update_cache: true
 
-  - name: Install Docker Compose CLI
-    ansible.builtin.package:
-      name: docker-cli-compose
-      state: present
-      update_cache: true
+- name: Install Docker Compose CLI
+  ansible.builtin.package:
+    name: docker-cli-compose
+    state: present
+    update_cache: true
 
-  - name: Start and enable Docker daemon
-    ansible.builtin.service:
-      name: docker
-      state: started
-      enabled: true
+- name: Start and enable Docker daemon
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true

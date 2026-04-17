@@ -5,7 +5,7 @@
       - git
     state: present
 
-- name: "Create {{ stacks_dir }}/m2web"
+- name: Create m2web stacks dir
   ansible.builtin.file:
     name: "{{ stacks_dir }}/m2web"
     state: directory
@@ -44,11 +44,11 @@
     project_name: m2web
     project_src: "{{ stacks_dir }}/m2web"
     state: present
-  register: docker_output
+  register: m2web_docker_output
 
 - name: Show results
   ansible.builtin.debug:
-    var: docker_output
+    var: m2web_docker_output
 
 - name: Shut m2web down
   community.docker.docker_compose_v2:

@@ -8,4 +8,4 @@ services:
       - "${M2_PORT}:${M2_PORT}"
     restart: unless-stopped
     volumes:
-      - "{{ srv_dir }}:/root/m2/extern:ro"
+      - "{{ m2web_srv_dir }}:/root/m2/extern:ro"

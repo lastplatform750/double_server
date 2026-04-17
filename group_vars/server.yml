@@ -7,7 +7,7 @@ beets_llvm_version: "20"
 ## MAKE SURE THESE ARE CORRECT DRIVES ##
 zfs_pool_devices: "{{ ['sdb', 'sdc', 'sdd', 'sde'] if debug | bool else ['sda', 'sdb'] }}"
 
-## Groups ## 
+## Groups ##
 main_user_groups:
   - wheel
   - audio
@@ -31,7 +31,7 @@ server_groups:
 
 stacks_group: stacks
 
-## Users ## 
+## Users ##
 service_users:
   anki:
     name: anki
@@ -109,7 +109,7 @@ internal_dirs:
     group: "{{ service_users['immich']['name'] }}"
     mode: "0700"
     recurse: true
-  m2web_srv_dir: 
+  m2web_srv_dir:
     path: /srv/m2web
     owner: "root"
     group: "m2webdata"
@@ -175,7 +175,6 @@ internal_dirs:
     group: "{{ service_users['jellyfin']['name'] }}"
     mode: "0700"
     recurse: true
-
 
 external_dirs:
   vid:
@@ -287,7 +286,6 @@ navidrome_volumes:
     host: "{{ external_dirs['music_tagged']['path'] }}"
     dest: /music
     flags: ":ro"
-
 
 ## ZFS Options ##
 zfs_pool_name: data

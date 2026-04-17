@@ -16,7 +16,7 @@
         state: present
         persistent: present
 
-- name: "Create {{ stacks_dir }}/qbittorrent"
+- name: Create qbittorrent stacks dir
   ansible.builtin.file:
     name: "{{ stacks_dir }}/qbittorrent"
     state: directory
@@ -46,11 +46,11 @@
     project_src: "{{ stacks_dir }}/qbittorrent"
     state: present
     pull: always
-  register: docker_output
+  register: qbittorrent_docker_output
 
 - name: Show results
   ansible.builtin.debug:
-    var: docker_output
+    var: qbittorrent_docker_output
 
 - name: Read qBittorrent logs
   ansible.builtin.command:

@@ -1,5 +1,5 @@
 ---
-- name: "Create {{ stacks_dir }}/immich"
+- name: Create immich stacks dir
   ansible.builtin.file:
     name: "{{ stacks_dir }}/immich"
     state: directory
@@ -45,11 +45,11 @@
     project_name: immich
     project_src: "{{ stacks_dir }}/immich"
     state: present
-  register: docker_output
+  register: immich_docker_output
 
 - name: Show results
   ansible.builtin.debug:
-    var: docker_output
+    var: ommich_docker_output
 
 - name: Shut immich down
   community.docker.docker_compose_v2:

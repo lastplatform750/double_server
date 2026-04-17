@@ -1,5 +1,5 @@
---- 
-- name: "Create {{ stacks_dir }}/paperless"
+---
+- name: Create paperless stacks dir
   ansible.builtin.file:
     name: "{{ stacks_dir }}/paperless"
     state: directory
@@ -19,25 +19,25 @@
   ansible.builtin.replace:
     path: "{{ stacks_dir }}/paperless/docker-compose.yml"
     regexp: "- data:/usr/src/paperless/data"
-    replace: "- {{ srv_data_dir }}:/usr/src/paperless/data"
+    replace: "- {{ paperless_srv_data_dir }}:/usr/src/paperless/data"
 
 - name: Set media volume location
   ansible.builtin.replace:
     path: "{{ stacks_dir }}/paperless/docker-compose.yml"
     regexp: "- media:/usr/src/paperless/media"
-    replace: "- {{ srv_media_dir }}:/usr/src/paperless/media"
+    replace: "- {{ paperless_srv_media_dir }}:/usr/src/paperless/media"
 
 - name: Set export volume location
   ansible.builtin.replace:
     path: "{{ stacks_dir }}/paperless/docker-compose.yml"
     regexp: "- ./export:/usr/src/paperless/export"
-    replace: "- {{ srv_export_dir }}:/usr/src/paperless/export"
+    replace: "- {{ paperless_srv_export_dir }}:/usr/src/paperless/export"
 
 - name: Set consume volume location
   ansible.builtin.replace:
     path: "{{ stacks_dir }}/paperless/docker-compose.yml"
     regexp: "- ./consume:/usr/src/paperless/consume"
-    replace: "- {{ srv_consume_dir }}:/usr/src/paperless/consume"
+    replace: "- {{ paperless_srv_consume_dir }}:/usr/src/paperless/consume"
 
 - name: Set uid and gid in docker-compose.yml
   ansible.builtin.lineinfile:
@@ -54,7 +54,7 @@
     group: "{{ stacks_owner }}"
     mode: "0700"
 
-- name: "Set PAPERLESS_TIME_ZONE to {{ timezone }}"
+- name: "Set PAPERLESS_TIME_ZONE"
   ansible.builtin.lineinfile:
     path: "{{ stacks_dir }}/paperless/docker-compose.env"
     insertafter: "EOF"
@@ -82,11 +82,11 @@
     project_src: "{{ stacks_dir }}/paperless"
     state: present
     pull: always
-  register: docker_output
+  register: paperless_docker_output
 
 - name: Show results
   ansible.builtin.debug:
-    var: docker_output
+    var: paperless_docker_output
 
 - name: Shut paperless down
   community.docker.docker_compose_v2:

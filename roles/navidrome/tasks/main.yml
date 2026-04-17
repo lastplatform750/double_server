@@ -1,5 +1,5 @@
 ---
-- name: "Create {{ stacks_dir }}/navidrome"
+- name: Create navidrome stacks dir
   ansible.builtin.file:
     name: "{{ stacks_dir }}/navidrome"
     state: directory
@@ -37,11 +37,11 @@
     project_src: "{{ stacks_dir }}/navidrome"
     state: present
     pull: always
-  register: docker_output
+  register: navidrome_docker_output
 
 - name: Show results
   ansible.builtin.debug:
-    var: docker_output
+    var: navidrome_docker_output
 
 - name: Shut navidrome down
   community.docker.docker_compose_v2:

@@ -45,7 +45,7 @@
       - -Ho
       - name
       - "{{ zfs_pool_name }}"
-  register: result_pool_list
+  register: external_drive_result_pool_list
   ignore_errors: true
   changed_when: false
 
@@ -57,7 +57,7 @@
     {{ zfs_pool_name }}
     {{ zfs_pool_mode if zfs_pool_mode else '' }}
     {{ zfs_pool_devices | join(' ') }}
-  when: result_pool_list.rc == 1
+  when: external_drive_result_pool_list.rc == 1
   changed_when: true
 
 - name: Set up external directories
