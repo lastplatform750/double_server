@@ -1,0 +1,11 @@
+---
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    user: ${NAVIDROME_UID}:${NAVIDROME_GID}
+    group_add:
+      - ${MUSICMEDIA_GID}
+    ports:
+      - "${NAVIDROME_PORT}:${NAVIDROME_PORT}"
+    restart: unless-stopped
+    volumes:

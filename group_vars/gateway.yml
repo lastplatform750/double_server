@@ -1,4 +1,45 @@
 ---
-
 wan_iface: wlan0
 lan_iface: eth0
+
+gateway_user: rasp
+desktop_dwl_release: "0.8"
+desktop_dwl_git_url: "https://codeberg.org/dwl/dwl/releases/download/v0.8/dwl-v0.8.tar.gz"
+desktop_wbg_git_url: "https://codeberg.org/dnkl/wbg"
+
+desktop_dependencies:
+  - adwaita-icon-theme
+  - blueman
+  - zotero
+  - git
+  - font-noto
+  - font-noto-cjk
+  - wmenu
+  - foot
+  - librewolf
+  - mesa-dri-gallium
+  - tar
+  - seatd
+  - clang21
+  - make
+  - libinput
+  - libinput-dev
+  - wayland
+  - wayland-dev
+  - wlroots
+  - wlroots-dev
+  - libxkbcommon
+  - libxkbcommon-dev
+  - wayland-protocols
+  - pkgconf
+  - pixman
+  - pixman-dev
+  - libpng
+  - libpng-dev
+  - jpeg
+  - jpeg-dev
+  - tllist
+  - tllist-dev
+  - meson
+  - thunar
+  - rsync

@@ -1,0 +1,31 @@
+---
+## Docker Volumes ##
+immich_volumes:
+  pic:
+    host: "{{ external_dirs['pic']['path'] }}"
+    dest: "{{ external_dirs['pic']['path'] }}"
+    flags: ":ro"
+
+jellyfin_volumes:
+  config:
+    host: "{{ internal_dirs['jellyfin_srv_config_dir']['path'] }}"
+    dest: /config
+    flags: ""
+  cache:
+    host: "{{ internal_dirs['jellyfin_srv_cache_dir']['path'] }}"
+    dest: /cache
+    flags: ""
+  vid:
+    host: "{{ external_dirs['vid']['path'] }}"
+    dest: /vid
+    flags: ":ro"
+
+navidrome_volumes:
+  data:
+    host: "{{ internal_dirs['navidrome_srv_dir']['path'] }}"
+    dest: /data
+    flags: ""
+  musid:
+    host: "{{ external_dirs['music_tagged']['path'] }}"
+    dest: /music
+    flags: ":ro"

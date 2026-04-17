@@ -1,0 +1,121 @@
+---
+## Internal Directories ##
+docker_compose_dir: /opt/stacks
+
+external_mount: /mnt/data
+
+internal_dirs:
+  main_config:
+    path: "/home/{{ main_user }}/.config"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: true
+  beets_config:
+    path: "/home/{{ main_user }}/.config/beets"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: true
+  beets_install:
+    path: /opt/beets
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: true
+  anki_etc_dir:
+    path: /etc/anki
+    owner: "{{ service_users['anki']['name'] }}"
+    group: "{{ service_users['anki']['name'] }}"
+    mode: "0700"
+    recurse: true
+  srv:
+    path: /srv
+    owner: root
+    group: root
+    mode: "0755"
+    recurse: false
+  stacks:
+    path: /opt/stacks
+    owner: root
+    group: stacks
+    mode: "0750"
+    recurse: false
+  anki_srv_dir:
+    path: /srv/anki
+    owner: "{{ service_users['anki']['name'] }}"
+    group: "{{ service_users['anki']['name'] }}"
+    mode: "0700"
+    recurse: true
+  immich_srv_dir:
+    path: /srv/immich
+    owner: "{{ service_users['immich']['name'] }}"
+    group: "{{ service_users['immich']['name'] }}"
+    mode: "0700"
+    recurse: true
+  m2web_srv_dir:
+    path: /srv/m2web
+    owner: "root"
+    group: "m2webdata"
+    mode: "0770"
+    recurse: true
+  qbittorrent_srv_dir:
+    path: /srv/qbittorrent
+    owner: "{{ service_users['qbittorrent']['name'] }}"
+    group: "{{ service_users['qbittorrent']['name'] }}"
+    mode: "0700"
+    recurse: true
+  navidrome_srv_dir:
+    path: /srv/navidrome
+    owner: "{{ service_users['navidrome']['name'] }}"
+    group: "{{ service_users['navidrome']['name'] }}"
+    mode: "0700"
+    recurse: true
+  paperless_srv_dir:
+    path: /srv/paperless
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "0700"
+    recurse: true
+  paperless_srv_data_dir:
+    path: /srv/paperless/data
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "0700"
+    recurse: true
+  paperless_srv_media_dir:
+    path: /srv/paperless/media
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "0700"
+    recurse: true
+  paperless_srv_export_dir:
+    path: /srv/paperless/export
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "0700"
+    recurse: true
+  paperless_srv_consume_dir:
+    path: /srv/paperless/consume
+    owner: "{{ service_users['paperless']['name'] }}"
+    group: "{{ service_users['paperless']['name'] }}"
+    mode: "0700"
+    recurse: true
+  jellyfin_srv_dir:
+    path: /srv/jellyfin
+    owner: "{{ service_users['jellyfin']['name'] }}"
+    group: "{{ service_users['jellyfin']['name'] }}"
+    mode: "0700"
+    recurse: true
+  jellyfin_srv_config_dir:
+    path: "/srv/jellyfin/config"
+    owner: "{{ service_users['jellyfin']['name'] }}"
+    group: "{{ service_users['jellyfin']['name'] }}"
+    mode: "0700"
+    recurse: true
+  jellyfin_srv_cache_dir:
+    path: /srv/jellyfin/cache
+    owner: "{{ service_users['jellyfin']['name'] }}"
+    group: "{{ service_users['jellyfin']['name'] }}"
+    mode: "0700"
+    recurse: true

@@ -1,0 +1,97 @@
+---
+- name: Gateway Setup
+  hosts: gateway
+  become: true
+
+  roles:
+    - role: desktop
+    - role: tailscale
+
+  pre_tasks:
+    - name: Template in repository file
+      ansible.builtin.template:
+        src: repositories.j2
+        dest: /etc/apk/repositories
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Update system
+      ansible.builtin.package:
+        update_cache: true
+        upgrade: true
+
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ gateway_hostname }}"
+        use: alpine
+      notify: Reboot system
+
+    - name: Install nftables
+      ansible.builtin.package:
+        name: nftables
+        state: present
+
+    - name: Enable IPv4 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: "1"
+        state: present
+        sysctl_set: true
+        reload: true
+
+    - name: Template nftables rules
+      ansible.builtin.template:
+        src: gateway/gateway.nft.j2
+        dest: /etc/nftables.d/gateway.nft
+        mode: "0644"
+      notify: Reload nftables
+
+    - name: Template network interfaces
+      ansible.builtin.template:
+        src: gateway/interfaces.j2
+        dest: /etc/network/interfaces
+        mode: "0644"
+
+    - name: Template eth-watch script
+      ansible.builtin.template:
+        src: gateway/eth-watch.sh.j2
+        dest: /usr/local/bin/eth-watch.sh
+        owner: root
+        group: root
+        mode: "0500"
+
+    - name: Template eth-watch service file
+      ansible.builtin.template:
+        src: gateway/eth-watch.j2
+        dest: /etc/init.d/eth-watch
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Enable eth-watch at boot
+      ansible.builtin.service:
+        name: eth-watch
+        enabled: true
+        state: started
+
+    - name: Enable nftables at boot
+      ansible.builtin.service:
+        name: nftables
+        enabled: true
+        state: started
+
+    - name: Enable networking at boot
+      ansible.builtin.service:
+        name: networking
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Reload nftables
+      ansible.builtin.service:
+        name: nftables
+        state: reloaded
+
+    - name: Reboot system
+      ansible.builtin.reboot:

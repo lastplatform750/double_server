@@ -1,0 +1,11 @@
+---
+services:
+  jellyfin:
+    image: ghcr.io/jellyfin/jellyfin:latest
+    user: "${JELLYFIN_UID}:${JELLYFIN_GID}"
+    group_add:
+      - "${VIDMEDIA_GID}"
+    ports:
+      - "${JELLYFIN_PORT}:${JELLYFIN_PORT}"
+    restart: unless-stopped
+    volumes:

@@ -1,0 +1,71 @@
+---
+- name: Install ZFS
+  ansible.builtin.package:
+    name: zfs
+    state: present
+
+- name: Attempt to add zfs module
+  block:
+    - name: First attempt to add the zfs module
+      community.general.modprobe:
+        name: zfs
+        state: present
+        persistent: present
+  rescue:
+    - name: Couldn't add the zfs module, rebooting
+      ansible.builtin.reboot:
+        reboot_timeout: 120
+    - name: Second attempt to add the zfs module
+      community.general.modprobe:
+        name: zfs
+        state: present
+        persistent: present
+
+- name: Start and enable zfs boot services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    runlevel: boot
+  loop: "{{ zfs_boot_services }}"
+
+- name: Start and enable zfs default services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    runlevel: default
+  loop: "{{ zfs_default_services }}"
+
+- name: Check ZFS pool existance
+  ansible.builtin.command:
+    argv:
+      - zpool
+      - list
+      - -Ho
+      - name
+      - "{{ zfs_pool_name }}"
+  register: external_drive_result_pool_list
+  ignore_errors: true
+  changed_when: false
+
+- name: Create ZFS pool
+  ansible.builtin.command: >-
+    zpool create
+    {{ '-o' if zfs_pool_options else '' }} {{ zfs_pool_options | join(' -o ') }}
+    {{ '-m ' + zfs_pool_mountpoint if zfs_pool_mountpoint else '' }}
+    {{ zfs_pool_name }}
+    {{ zfs_pool_mode if zfs_pool_mode else '' }}
+    {{ zfs_pool_devices | join(' ') }}
+  when: external_drive_result_pool_list.rc == 1
+  changed_when: true
+
+- name: Set up external directories
+  ansible.builtin.file:
+    name: "{{ item.value['path'] }}"
+    state: directory
+    owner: "{{ item.value['owner'] }}"
+    group: "{{ item.value['group'] }}"
+    mode: "{{ item.value['mode'] }}"
+    recurse: "{{ item.value['recurse'] }}"
+  loop: "{{ external_dirs | dict2items }}"

@@ -1,0 +1,144 @@
+---
+- name: Server Setup
+  hosts: server
+  become: true
+
+  vars:
+    stacks_dir: "{{ internal_dirs['stacks']['path'] }}"
+    stacks_owner: "{{ internal_dirs['stacks']['owner'] }}"
+    stacks_group: "{{ internal_dirs['stacks']['group'] }}"
+
+    musicmedia_gid: "{{ gid_dict['musicmedia'] }}"
+    vidmedia_gid: "{{ gid_dict['vidmedia'] }}"
+    picmedia_gid: "{{ gid_dict['picmedia'] }}"
+    othermedia_gid: "{{ gid_dict['othermedia'] }}"
+    m2webdata_gid: "{{ gid_dict['m2webdata'] }}"
+
+    qtmp_path: "{{ external_dirs['qtmp']['path'] }}"
+    music_untagged_path: "{{ external_dirs['music_untagged']['path'] }}"
+    vid_path: "{{ external_dirs['vid']['path'] }}"
+    pic_path: "{{ external_dirs['pic']['path'] }}"
+    other_path: "{{ external_dirs['other']['path'] }}"
+
+  roles:
+    - role: docker
+    - role: external_drive
+    - role: beets
+      vars:
+        beets_data_dir: "{{ external_dirs['beets']['path'] }}"
+        beets_music_tagged_dir: "{{ external_dirs['music_tagged']['path'] }}"
+        beets_install_dir: "{{ internal_dirs['beets_install']['path'] }}"
+        beets_config_dir: "{{ internal_dirs['beets_config']['path'] }}"
+    - role: anki
+      vars:
+        anki_user: "{{ service_users['anki']['name'] }}"
+        anki_srv_dir: "{{ internal_dirs['anki_srv_dir']['path'] }}"
+    - role: m2web
+      vars:
+        m2web_srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
+    - role: qbittorrent
+      vars:
+        qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"
+        qbittorrent_user_uid: "{{ uid_dict[qbittorrent_user] }}"
+        qbittorrent_user_gid: "{{ gid_dict[qbittorrent_user] }}"
+        qbittorrent_srv_dir: "{{ internal_dirs['qbittorrent_srv_dir']['path'] }}"
+    - role: paperless
+      vars:
+        paperless_user: "{{ service_users['paperless']['name'] }}"
+        paperless_user_uid: "{{ uid_dict[paperless_user] }}"
+        paperless_user_gid: "{{ gid_dict[paperless_user] }}"
+        paperless_srv_data_dir: "{{ internal_dirs['paperless_srv_data_dir']['path'] }}"
+        paperless_srv_media_dir: "{{ internal_dirs['paperless_srv_media_dir']['path'] }}"
+        paperless_srv_export_dir: "{{ internal_dirs['paperless_srv_export_dir']['path'] }}"
+        paperless_srv_consume_dir: "{{ internal_dirs['paperless_srv_consume_dir']['path'] }}"
+    - role: navidrome
+      vars:
+        navidrome_user: "{{ service_users['navidrome']['name'] }}"
+        navidrome_user_uid: "{{ uid_dict[navidrome_user] }}"
+        navidrome_user_gid: "{{ gid_dict[navidrome_user] }}"
+    - role: jellyfin
+      vars:
+        jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
+        jellyfin_user_uid: "{{ uid_dict[jellyfin_user] }}"
+        jellyfin_user_gid: "{{ gid_dict[jellyfin_user] }}"
+    - role: immich
+      vars:
+        immich_user: "{{ service_users['immich']['name'] }}"
+        immich_user_uid: "{{ uid_dict[immich_user] }}"
+        immich_user_gid: "{{ gid_dict[immich_user] }}"
+        immich_srv_dir: "{{ internal_dirs['immich_srv_dir']['path'] }}"
+
+  pre_tasks:
+    - name: Announce debug
+      ansible.builtin.debug:
+        msg: "Debug is enabled!"
+      when: debug | bool
+
+    - name: Template in repository file
+      ansible.builtin.template:
+        src: repositories.j2
+        dest: /etc/apk/repositories
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Update system
+      ansible.builtin.package:
+        update_cache: true
+        upgrade: true
+
+    - name: Install rsync
+      ansible.builtin.package:
+        name: rsync
+        state: present
+
+    - name: Create groups
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ server_groups }}"
+
+    - name: "Create main user"
+      ansible.builtin.user:
+        name: "{{ main_user }}"
+        state: present
+        groups: "{{ main_user_groups }}"
+        create_home: true
+
+    - name: Create service users
+      ansible.builtin.user:
+        name: "{{ item.value['name'] }}"
+        state: present
+        groups: []
+        create_home: false
+      loop: "{{ service_users | dict2items }}"
+
+    - name: Get group info
+      ansible.builtin.getent:
+        database: group
+        split: ":"
+
+    - name: Make gid dictionary
+      ansible.builtin.set_fact:
+        gid_dict: "{{ gid_dict | default({}) | combine({item.key: item.value[1]}) }}"
+      loop: "{{ ansible_facts['getent_group'] | dict2items }}"
+
+    - name: Get user info
+      ansible.builtin.getent:
+        database: passwd
+        split: ":"
+
+    - name: Make uid dictionary
+      ansible.builtin.set_fact:
+        uid_dict: "{{ uid_dict | default({}) | combine({item.key: item.value[1]}) }}"
+      loop: "{{ ansible_facts['getent_passwd'] | dict2items }}"
+
+    - name: Set up internal directories
+      ansible.builtin.file:
+        name: "{{ item.value['path'] }}"
+        state: directory
+        owner: "{{ item.value['owner'] }}"
+        group: "{{ item.value['group'] }}"
+        mode: "{{ item.value['mode'] }}"
+        recurse: "{{ item.value['recurse'] }}"
+      loop: "{{ internal_dirs | dict2items }}"

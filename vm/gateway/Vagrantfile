@@ -18,15 +18,18 @@ Vagrant.configure("2") do |config|
   config.vm.define "gateway"
 
   config.vm.provider "virtualbox" do |v|
-        v.memory = 1024
+        v.memory = 3096
         v.cpus = 2
   end
 
+  config.vm.provision "shell",
+    inline: "echo permit nopass vagrant > /etc/doas.d/90-vagrant.conf"
+
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "../../playbooks/gateway/playbook.yml"
-    ansible.host_vars = {"gateway" => {}}
+    ansible.playbook = "../../gateway_setup.yml"
     ansible.ask_vault_pass = true
-    ansible.raw_arguments = ["-e", "@../../group_vars/secret.yml"]
+    ansible.config_file = "../../ansible.cfg"
+    ansible.inventory_path = "../../vm_hosts.ini"
   end
 
   # Disable automatic box update checking. If you disable this, then
