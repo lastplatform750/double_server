@@ -12,6 +12,14 @@ Current apps:
 - navidrome
 - immich
 - beets
+- m2 web ui
+
+Todo:
+- more robust backup/monitoring system
+- https/reverse proxy
+- forgejo(?)
+- explore other image server options
+- more hardening (apparmor?)
 
 ## Setup
 
