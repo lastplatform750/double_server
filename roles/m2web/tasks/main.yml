@@ -1,0 +1,57 @@
+---
+- name: Install dependencies
+  ansible.builtin.package:
+    name:
+      - git
+    state: present
+
+- name: "Create {{ stacks_dir }}/m2web"
+  ansible.builtin.file:
+    name: "{{ stacks_dir }}/m2web"
+    state: directory
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_group }}"
+    mode: "0750"
+
+- name: Template in compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ stacks_dir }}/m2web/docker-compose.yml"
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_group }}"
+    mode: "0700"
+
+- name: Template in env file
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ stacks_dir }}/m2web/.env"
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_group }}"
+    mode: "0700"
+
+- name: Fetch the m2web dockerfile
+  ansible.builtin.git:
+    repo: "{{ m2web_docker_git_url }}"
+    dest: "{{ stacks_dir }}/m2web/m2web_docker"
+
+- name: Build the m2web dockerfile
+  community.docker.docker_image_build:
+    name: m2web:latest
+    path: "{{ stacks_dir }}/m2web/m2web_docker"
+
+- name: Start the m2web service
+  community.docker.docker_compose_v2:
+    project_name: m2web
+    project_src: "{{ stacks_dir }}/m2web"
+    state: present
+  register: docker_output
+
+- name: Show results
+  ansible.builtin.debug:
+    var: docker_output
+
+- name: Shut m2web down
+  community.docker.docker_compose_v2:
+    project_src: "{{ stacks_dir }}/m2web"
+    state: stopped
+  when: debug | bool

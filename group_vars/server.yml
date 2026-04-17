@@ -51,6 +51,8 @@ paperless_compose_file_url: "https://raw.githubusercontent.com/paperless-ngx/pap
 paperless_compose_env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/docker-compose.env"
 paperless_env_file_url: "https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/refs/heads/main/docker/compose/.env"
 
+m2web_docker_git_url: "https://github.com/lastplatform750/m2web_docker"
+
 ## Directories ##
 docker_compose_dir: /opt/stacks
 
@@ -81,6 +83,12 @@ internal_dirs:
     group: "{{ service_users['immich']['name'] }}"
     mode: "0750"
     recurse: true
+  m2web_srv_dir: 
+    path: /srv/m2web
+    owner: "root"
+    group: "m2webdata"
+    mode: "0770"
+    recurse: true
   qbittorrent_srv_dir:
     path: /srv/qbittorrent
     owner: "{{ service_users['qbittorrent']['name'] }}"
@@ -97,31 +105,31 @@ internal_dirs:
     path: /srv/paperless
     owner: "{{ service_users['paperless']['name'] }}"
     group: "{{ service_users['paperless']['name'] }}"
-    mode: "700"
+    mode: "0700"
     recurse: true
   paperless_srv_data_dir:
     path: /srv/paperless/data
     owner: "{{ service_users['paperless']['name'] }}"
     group: "{{ service_users['paperless']['name'] }}"
-    mode: "700"
+    mode: "0700"
     recurse: true
   paperless_srv_media_dir:
     path: /srv/paperless/media
     owner: "{{ service_users['paperless']['name'] }}"
     group: "{{ service_users['paperless']['name'] }}"
-    mode: "700"
+    mode: "0700"
     recurse: true
   paperless_srv_export_dir:
     path: /srv/paperless/export
     owner: "{{ service_users['paperless']['name'] }}"
     group: "{{ service_users['paperless']['name'] }}"
-    mode: "700"
+    mode: "0700"
     recurse: true
   paperless_srv_consume_dir:
     path: /srv/paperless/consume
     owner: "{{ service_users['paperless']['name'] }}"
     group: "{{ service_users['paperless']['name'] }}"
-    mode: "700"
+    mode: "0700"
     recurse: true
   jellyfin_srv_dir:
     path: /srv/jellyfin

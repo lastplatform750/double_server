@@ -11,10 +11,14 @@
     musicmedia_gid: "{{ gid_dict['musicmedia'] }}"
     vidmedia_gid: "{{ gid_dict['vidmedia'] }}"
     othermedia_gid: "{{ gid_dict['othermedia'] }}"
+    m2webdata_gid: "{{ gid_dict['m2webdata'] }}"
 
   roles:
     - role: docker
     - role: external_drive
+    - role: m2web
+      vars:
+        srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
     - role: qbittorrent
       vars:
         qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"
