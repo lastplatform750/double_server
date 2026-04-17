@@ -52,7 +52,7 @@ internal_dirs:
     owner: "{{ service_users['immich']['name'] }}"
     group: "{{ service_users['immich']['name'] }}"
     mode: "0700"
-    recurse: true
+    recurse: false
   m2web_srv_dir:
     path: /srv/m2web
     owner: "root"
