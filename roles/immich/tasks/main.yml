@@ -45,6 +45,7 @@
     project_name: immich
     project_src: "{{ stacks_dir }}/immich"
     state: present
+    pull: "{{ update_dockers | ternary('always', 'never', omit) }}"
   register: immich_docker_output
 
 - name: Show results

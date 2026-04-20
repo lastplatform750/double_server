@@ -81,7 +81,7 @@
     project_name: paperless
     project_src: "{{ stacks_dir }}/paperless"
     state: present
-    pull: always
+    pull: "{{ update_dockers | ternary('always', 'never', omit) }}"
   register: paperless_docker_output
 
 - name: Show results

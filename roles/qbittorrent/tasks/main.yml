@@ -45,7 +45,7 @@
     project_name: qbittorrent
     project_src: "{{ stacks_dir }}/qbittorrent"
     state: present
-    pull: always
+    pull: "{{ update_dockers | ternary('always', 'never', omit) }}"
   register: qbittorrent_docker_output
 
 - name: Show results
