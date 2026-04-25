@@ -1,0 +1,44 @@
+---
+- name: Sync with server
+  hosts: server
+  become: true
+
+  tasks:
+    - name: Sync pictures
+      ansible.posix.synchronize:
+        src: "{{ tk_picture_dir }}"
+        dest: "{{ external_dirs['pic']['path'] }}"
+        rsync_opts: '--exclude "key"'
+        recursive: true
+        delete: true
+
+    - name: Sync m2 files
+      ansible.posix.synchronize:
+        src: "{{ tk_m2_dir }}/"
+        dest: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
+        rsync_opts: '--exclude ".git" --exclude ".gitignore"'
+        recursive: true
+        delete: true
+        group: false
+        times: false
+        perms: false
+
+    - name: Verify internal directories
+      ansible.builtin.file:
+        name: "{{ item.value['path'] }}"
+        state: directory
+        owner: "{{ item.value['owner'] }}"
+        group: "{{ item.value['group'] }}"
+        mode: "{{ item.value['mode'] }}"
+        recurse: "{{ item.value['recurse'] }}"
+      loop: "{{ internal_dirs | dict2items }}"
+
+    - name: Verify external directories
+      ansible.builtin.file:
+        name: "{{ item.value['path'] }}"
+        state: directory
+        owner: "{{ item.value['owner'] }}"
+        group: "{{ item.value['group'] }}"
+        mode: "{{ item.value['mode'] }}"
+        recurse: "{{ item.value['recurse'] }}"
+      loop: "{{ external_dirs | dict2items }}"
