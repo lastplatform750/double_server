@@ -1,0 +1,8 @@
+---
+- name: Upgrade Server
+  ansible.builtin.import_playbook: server_setup.yml
+  vars:
+    update_dockers: true
+
+- name: Upgrade Gateway
+  ansible.builtin.import_playbook: gateway_setup.yml

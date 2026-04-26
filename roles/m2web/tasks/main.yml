@@ -38,6 +38,7 @@
   community.docker.docker_image_build:
     name: m2web:latest
     path: "{{ stacks_dir }}/m2web/m2web_docker"
+    rebuild: "{{ update_dockers | ternary('always', 'never', omit) }}"
 
 - name: Start the m2web service
   community.docker.docker_compose_v2:
