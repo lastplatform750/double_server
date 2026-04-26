@@ -8,6 +8,7 @@ desktop_dwl_git_url: "https://codeberg.org/dwl/dwl/releases/download/v0.8/dwl-v0
 desktop_wbg_git_url: "https://codeberg.org/dnkl/wbg"
 
 desktop_dependencies:
+  - tumbler
   - adwaita-icon-theme
   - blueman
   - zotero
