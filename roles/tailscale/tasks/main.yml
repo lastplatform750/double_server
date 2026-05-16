@@ -17,20 +17,20 @@
     state: started
     enabled: true
 
-- name: Get Tailscale status
-  ansible.builtin.shell: >
-    set -o pipefail #
-    tailscale status | awk -F' ' 'FNR == 1 {print $5}'
-  register: tailscale_status
-  changed_when: tailscale_status.rc != 0
+- name: Get Tailscale Ping Result
+  ansible.builtin.shell: |
+    set -o pipefail
+    tailscale ping {{ tailscale_control_address | quote }}
+  register: tailscale_ping
+  changed_when: tailscale_ping.rc != 0
 
-- name: Print Tailscale status
+- name: Print Tailscale Ping Result
   ansible.builtin.debug:
-    msg: "Tailscale Status: {{ tailscale_status.stdout }}"
+    msg: "Tailscale Ping Result: {{ tailscale_ping.stdout }}"
   when: debug | bool
 
 - name: Start and confirm Tailscale
-  when: 'tailscale_status.stdout == "" or "offline" in tailscale_status.stdout'
+  when: '"pong" not in tailscale_ping.stdout'
   block:
     - name: Bring Tailscale up
       ansible.builtin.command: >
@@ -45,20 +45,20 @@
       ansible.builtin.wait_for:
         timeout: 10
 
-    - name: Get Tailscale status
-      ansible.builtin.shell: >
+    - name: Get Tailscale Ping Result
+      ansible.builtin.shell: |
         set -o pipefail
-        tailscale status | awk -F' ' 'FNR == 1 {print $5}'
-      register: tailscale_status_new
-      changed_when: tailscale_status_new.rc != 0
+        tailscale ping {{ tailscale_control_address | quote }}
+      register: tailscale_ping_new
+      changed_when: tailscale_ping_new.rc != 0
 
-    - name: Print Tailscale status
+    - name: Print Tailscale Ping Result
       ansible.builtin.debug:
-        msg: "Tailscale Status: {{ new_tailscale_status.stdout }}"
+        msg: "Tailscale Ping Result: {{ tailscale_ping_new.stdout }}"
       when: debug | bool
 
-    - name: See if status is up
+    - name: See if Tailscale is up
       ansible.builtin.assert:
-        that: 'tailscale_status_new.stdout != "" and "offline" not in tailscale_status_new.stdout'
+        that: '"pong" in tailscale_ping_new.stdout'
         fail_msg: Tailscale is NOT up!
         success_msg: Tailscale is up!

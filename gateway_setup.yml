@@ -6,6 +6,8 @@
   roles:
     - role: desktop
     - role: tailscale
+      vars:
+        tailscale_control_address: "{{ tailscale_tk_address }}"
 
   pre_tasks:
     - name: Template in repository file
