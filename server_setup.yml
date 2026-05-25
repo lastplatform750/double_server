@@ -142,3 +142,12 @@
         mode: "{{ item.value['mode'] }}"
         recurse: "{{ item.value['recurse'] }}"
       loop: "{{ internal_dirs | dict2items }}"
+  
+  post_tasks:
+    - name: Prune Docker Data
+      community.docker.docker_prune:
+        containers: true
+        images: true
+        networks: true
+        volumes: true
+        builder_cache: true
