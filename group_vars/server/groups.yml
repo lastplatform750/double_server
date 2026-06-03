@@ -1,5 +1,5 @@
 ---
-## Groups ##
+# # Groups ##
 main_user_groups:
   - wheel
   - audio

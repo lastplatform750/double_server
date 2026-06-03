@@ -4,9 +4,9 @@
   become: true
 
   vars:
-    stacks_dir: "{{ internal_dirs['stacks']['path'] }}"
-    stacks_owner: "{{ internal_dirs['stacks']['owner'] }}"
-    stacks_group: "{{ internal_dirs['stacks']['group'] }}"
+    stacks_dir: "{{ server_internal_dirs['stacks']['path'] }}"
+    stacks_owner: "{{ server_internal_dirs['stacks']['owner'] }}"
+    stacks_group: "{{ server_internal_dirs['stacks']['group'] }}"
 
     musicmedia_gid: "{{ gid_dict['musicmedia'] }}"
     vidmedia_gid: "{{ gid_dict['vidmedia'] }}"
@@ -14,43 +14,47 @@
     othermedia_gid: "{{ gid_dict['othermedia'] }}"
     m2webdata_gid: "{{ gid_dict['m2webdata'] }}"
 
-    qtmp_path: "{{ external_dirs['qtmp']['path'] }}"
-    music_untagged_path: "{{ external_dirs['music_untagged']['path'] }}"
-    vid_path: "{{ external_dirs['vid']['path'] }}"
-    pic_path: "{{ external_dirs['pic']['path'] }}"
-    other_path: "{{ external_dirs['other']['path'] }}"
+    qtmp_path: "{{ server_external_dirs['qtmp']['path'] }}"
+    music_untagged_path: "{{ server_external_dirs['music_untagged']['path'] }}"
+    vid_path: "{{ server_external_dirs['vid']['path'] }}"
+    pic_path: "{{ server_external_dirs['pic']['path'] }}"
+    other_path: "{{ server_external_dirs['other']['path'] }}"
 
   roles:
     - role: docker
     - role: external_drive
+    - role: check_dirs
+      vars:
+        check_dirs_dicts: "{{ [server_external_dirs] }}"
+        check_dirs_zfs_pool: true
     - role: beets
       vars:
-        beets_data_dir: "{{ external_dirs['beets']['path'] }}"
-        beets_music_tagged_dir: "{{ external_dirs['music_tagged']['path'] }}"
-        beets_install_dir: "{{ internal_dirs['beets_install']['path'] }}"
-        beets_config_dir: "{{ internal_dirs['beets_config']['path'] }}"
+        beets_data_dir: "{{ server_external_dirs['beets']['path'] }}"
+        beets_music_tagged_dir: "{{ server_external_dirs['music_tagged']['path'] }}"
+        beets_install_dir: "{{ server_internal_dirs['beets_install']['path'] }}"
+        beets_config_dir: "{{ server_internal_dirs['beets_config']['path'] }}"
     - role: anki
       vars:
         anki_user: "{{ service_users['anki']['name'] }}"
-        anki_srv_dir: "{{ internal_dirs['anki_srv_dir']['path'] }}"
+        anki_srv_dir: "{{ server_internal_dirs['anki_srv_dir']['path'] }}"
     - role: m2web
       vars:
-        m2web_srv_dir: "{{ internal_dirs['m2web_srv_dir']['path'] }}"
+        m2web_srv_dir: "{{ server_internal_dirs['m2web_srv_dir']['path'] }}"
     - role: qbittorrent
       vars:
         qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"
         qbittorrent_user_uid: "{{ uid_dict[qbittorrent_user] }}"
         qbittorrent_user_gid: "{{ gid_dict[qbittorrent_user] }}"
-        qbittorrent_srv_dir: "{{ internal_dirs['qbittorrent_srv_dir']['path'] }}"
+        qbittorrent_srv_dir: "{{ server_internal_dirs['qbittorrent_srv_dir']['path'] }}"
     - role: paperless
       vars:
         paperless_user: "{{ service_users['paperless']['name'] }}"
         paperless_user_uid: "{{ uid_dict[paperless_user] }}"
         paperless_user_gid: "{{ gid_dict[paperless_user] }}"
-        paperless_srv_data_dir: "{{ internal_dirs['paperless_srv_data_dir']['path'] }}"
-        paperless_srv_media_dir: "{{ internal_dirs['paperless_srv_media_dir']['path'] }}"
-        paperless_srv_export_dir: "{{ internal_dirs['paperless_srv_export_dir']['path'] }}"
-        paperless_srv_consume_dir: "{{ internal_dirs['paperless_srv_consume_dir']['path'] }}"
+        paperless_srv_data_dir: "{{ server_internal_dirs['paperless_srv_data_dir']['path'] }}"
+        paperless_srv_media_dir: "{{ server_internal_dirs['paperless_srv_media_dir']['path'] }}"
+        paperless_srv_export_dir: "{{ server_internal_dirs['paperless_srv_export_dir']['path'] }}"
+        paperless_srv_consume_dir: "{{ server_internal_dirs['paperless_srv_consume_dir']['path'] }}"
     - role: navidrome
       vars:
         navidrome_user: "{{ service_users['navidrome']['name'] }}"
@@ -66,7 +70,7 @@
         immich_user: "{{ service_users['immich']['name'] }}"
         immich_user_uid: "{{ uid_dict[immich_user] }}"
         immich_user_gid: "{{ gid_dict[immich_user] }}"
-        immich_srv_dir: "{{ internal_dirs['immich_srv_dir']['path'] }}"
+        immich_srv_dir: "{{ server_internal_dirs['immich_srv_dir']['path'] }}"
 
   pre_tasks:
     - name: Announce debug
@@ -134,15 +138,11 @@
       loop: "{{ ansible_facts['getent_passwd'] | dict2items }}"
 
     - name: Set up internal directories
-      ansible.builtin.file:
-        name: "{{ item.value['path'] }}"
-        state: directory
-        owner: "{{ item.value['owner'] }}"
-        group: "{{ item.value['group'] }}"
-        mode: "{{ item.value['mode'] }}"
-        recurse: "{{ item.value['recurse'] }}"
-      loop: "{{ internal_dirs | dict2items }}"
-  
+      ansible.builtin.include_role:
+        name: check_dirs
+      vars:
+        check_dirs_dicts: "{{ [server_internal_dirs] }}"
+
   post_tasks:
     - name: Prune Docker Data
       community.docker.docker_prune:

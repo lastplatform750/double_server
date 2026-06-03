@@ -1,10 +1,10 @@
 ---
-## Internal Directories ##
+# # Internal Directories ##
 docker_compose_dir: /opt/stacks
 
 external_mount: /mnt/data
 
-internal_dirs:
+server_internal_dirs:
   main_config:
     path: "/home/{{ main_user }}/.config"
     owner: "{{ main_user }}"

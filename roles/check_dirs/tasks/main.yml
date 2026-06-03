@@ -1,0 +1,25 @@
+---
+- name: Check ZFS pool existance
+  ansible.builtin.command:
+    argv:
+      - zpool
+      - list
+      - -Ho
+      - name
+      - "{{ zfs_pool_name }}"
+  register: check_dirs_zfs_pool_result
+  ignore_errors: true
+  changed_when: false
+  when: check_dirs_zfs_pool | bool
+
+- name: Assert ZFS pool existance
+  ansible.builtin.assert:
+    that: "check_dirs_zfs_pool_result.rc != 1"
+  when: check_dirs_zfs_pool | bool
+
+# Outer loop
+- name: Check directories for each dictionary
+  ansible.builtin.include_tasks: check_dir.yml
+  loop: "{{ check_dirs_dicts }}"
+  loop_control:
+    loop_var: dir_dict

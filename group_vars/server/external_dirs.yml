@@ -1,6 +1,6 @@
 ---
-## External Directories ##
-external_dirs:
+# # External Directories ##
+server_external_dirs:
   vid:
     path: "{{ external_mount }}/vid"
     owner: qbittorrent

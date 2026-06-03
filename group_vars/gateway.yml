@@ -7,6 +7,14 @@ desktop_dwl_release: "0.8"
 desktop_dwl_git_url: "https://codeberg.org/dwl/dwl/releases/download/v0.8/dwl-v0.8.tar.gz"
 desktop_wbg_git_url: "https://codeberg.org/dnkl/wbg"
 
+gateway_dirs:
+  input_pic:
+    path: "/home/{{ gateway_user }}/input_pic"
+    owner: "{{ gateway_user }}"
+    group: "{{ gateway_user }}"
+    mode: "0700"
+    recurse: false
+
 desktop_dependencies:
   - tumbler
   - adwaita-icon-theme

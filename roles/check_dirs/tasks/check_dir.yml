@@ -1,0 +1,11 @@
+---
+# Inner loop
+- name: Set up directories in dictionary
+  ansible.builtin.file:
+    name: "{{ item.value['path'] }}"
+    state: directory
+    owner: "{{ item.value['owner'] }}"
+    group: "{{ item.value['group'] }}"
+    mode: "{{ item.value['mode'] }}"
+    recurse: "{{ item.value['recurse'] }}"
+  loop: "{{ dir_dict | dict2items }}"
