@@ -4,6 +4,9 @@
   become: true
 
   roles:
+    - role: check_dirs
+      vars:
+        check_dirs_dicts: "{{ [gateway_dirs] }}"
     - role: desktop
     - role: tailscale
       vars:
