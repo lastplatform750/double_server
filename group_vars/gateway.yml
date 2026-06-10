@@ -8,12 +8,24 @@ desktop_dwl_git_url: "https://codeberg.org/dwl/dwl/releases/download/v0.8/dwl-v0
 desktop_wbg_git_url: "https://codeberg.org/dnkl/wbg"
 
 gateway_dirs:
+  zotero:
+    path: "/home/{{ gateway_user }}/Zotero"
+    owner: "{{ gateway_user }}"
+    group: "{{ gateway_user }}"
+    mode: "0700"
+    recurse: true
+  pic:
+    path: "/home/{{ gateway_user }}/pic"
+    owner: "{{ gateway_user }}"
+    group: "{{ gateway_user }}"
+    mode: "0700"
+    recurse: true
   input_pic:
     path: "/home/{{ gateway_user }}/input_pic"
     owner: "{{ gateway_user }}"
     group: "{{ gateway_user }}"
     mode: "0700"
-    recurse: false
+    recurse: true
 
 desktop_dependencies:
   - tumbler
