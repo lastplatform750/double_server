@@ -39,6 +39,9 @@
   hosts: server
   become: true
 
+  roles:
+    - role: archive
+
   tasks:
     - name: Sync pictures
       ansible.posix.synchronize:

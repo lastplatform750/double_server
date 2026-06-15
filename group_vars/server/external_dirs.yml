@@ -79,3 +79,9 @@ server_external_dirs:
     group: immich
     mode: "0700"
     recurse: false
+  archive:
+    path: "{{ external_mount }}/archive"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: false

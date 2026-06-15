@@ -1,0 +1,6 @@
+---
+archive_cipher: AES256
+
+archive_owner: root
+archive_group: root
+archive_mode: "0700"

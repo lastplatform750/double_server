@@ -1,0 +1,60 @@
+---
+- name: Compress the folders
+  community.general.archive:
+    path: "{{ item.value['source_dir'] }}"
+    dest: "/tmp/{{ item.key }}.tar.gz"
+    mode: "0700"
+    format: gz
+  delegate_to: localhost
+  become: false
+  no_log: true
+  loop: "{{ archive_list | dict2items }}"
+
+- name: Encrypt the archives
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --batch
+      - --yes
+      - --pinentry-mode
+      - loopback
+      - --passphrase-fd
+      - "0"
+      - --symmetric
+      - --no-symkey-cache
+      - --cipher-algo
+      - "{{ archive_cipher }}"
+      - --output
+      - "/tmp/{{ item.key }}.tar.gz.gpg"
+      - "/tmp/{{ item.key }}.tar.gz"
+    stdin: "{{ gpg_passphrase }}"
+  delegate_to: localhost
+  become: false
+  no_log: true
+  loop: "{{ archive_list | dict2items }}"
+
+- name: Remove unencrypted archives
+  ansible.builtin.file:
+    path: "/tmp/{{ item.key }}.tar.gz"
+    state: absent
+  delegate_to: localhost
+  become: false
+  loop: "{{ archive_list | dict2items }}"
+
+- name: Copy archives to dest
+  ansible.builtin.copy:
+    src: /tmp/{{ item.key }}.tar.gz.gpg
+    dest: "{{ item.value['dest'] }}"
+    owner: "{{ archive_owner }}"
+    group: "{{ archive_group }}"
+    mode: "{{ archive_mode }}"
+    decrypt: false
+  loop: "{{ archive_list | dict2items }}"
+
+- name: Remove encrypted archives on controller
+  ansible.builtin.file:
+    path: "/tmp/{{ item.key }}.tar.gz.gpg"
+    state: absent
+  delegate_to: localhost
+  become: false
+  loop: "{{ archive_list | dict2items }}"
