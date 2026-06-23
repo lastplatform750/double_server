@@ -79,7 +79,7 @@
 
 - name: Make and install wbg
   ansible.builtin.shell:
-    cmd: meson --buildtype=release build && ninja -C build && ninja -C build install
+    cmd: "CC=clang-{{ gateway_clang_version }} CC_LD=lld meson setup --wipe --buildtype=release build && ninja -C build && ninja -C build install"
     chdir: "/home/{{ gateway_user }}/build/wbg"
 
 - name: Template in autostart script

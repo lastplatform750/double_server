@@ -27,12 +27,12 @@
       vars:
         check_dirs_dicts: "{{ [server_external_dirs] }}"
         check_dirs_zfs_pool: true
-    - role: beets
-      vars:
-        beets_data_dir: "{{ server_external_dirs['beets']['path'] }}"
-        beets_music_tagged_dir: "{{ server_external_dirs['music_tagged']['path'] }}"
-        beets_install_dir: "{{ server_internal_dirs['beets_install']['path'] }}"
-        beets_config_dir: "{{ server_internal_dirs['beets_config']['path'] }}"
+    # - role: beets
+    #   vars:
+    #     beets_data_dir: "{{ server_external_dirs['beets']['path'] }}"
+    #     beets_music_tagged_dir: "{{ server_external_dirs['music_tagged']['path'] }}"
+    #     beets_install_dir: "{{ server_internal_dirs['beets_install']['path'] }}"
+    #     beets_config_dir: "{{ server_internal_dirs['beets_config']['path'] }}"
     - role: anki
       vars:
         anki_user: "{{ service_users['anki']['name'] }}"

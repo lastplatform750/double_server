@@ -41,7 +41,9 @@ desktop_dependencies:
   - mesa-dri-gallium
   - tar
   - seatd
-  - clang21
+  - "lld{{ gateway_clang_version }}"
+  - "clang{{ gateway_clang_version }}"
+  - gcc
   - make
   - libinput
   - libinput-dev

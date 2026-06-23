@@ -15,11 +15,17 @@ Current apps:
 - m2 web ui
 
 Todo:
+- fix beets
+- more robust package handling (remove no longer needed packages)
+- fix lint errors
+- setup dcron
+- bazzite stuff
 - more robust backup/monitoring system
 - https/reverse proxy
 - forgejo(?)
 - explore other image server options
 - more hardening (apparmor?)
+- build VMs?
 
 ## Setup
 
