@@ -1,0 +1,7 @@
+---
+- name: Archive Files
+  hosts: server
+  become: true
+
+  roles:
+    - role: archive
