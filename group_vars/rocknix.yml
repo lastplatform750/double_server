@@ -1,0 +1,12 @@
+---
+rocknix_port: "{{ hostvars['rocknix']['ansible_port'] }}"
+rocknix_host: "{{ hostvars['rocknix']['ansible_host'] }}"
+rocknix_user: "{{ hostvars['rocknix']['ansible_user'] }}"
+
+rocknix_dirs:
+  roms:
+    path: "/storage/roms"
+    owner: "{{ rocknix_user }}"
+    group: "{{ rocknix_user }}"
+    mode: "0700"
+    recurse: false

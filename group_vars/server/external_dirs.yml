@@ -85,3 +85,9 @@ server_external_dirs:
     group: "{{ main_user }}"
     mode: "0700"
     recurse: false
+  roms:
+    path: "{{ external_mount }}/roms"
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: "0700"
+    recurse: false

@@ -20,6 +20,7 @@ Todo:
 - fix lint errors
 - setup dcron
 - bazzite stuff
+- rocknix stuff
 - more robust backup/monitoring system
 - https/reverse proxy
 - forgejo(?)
