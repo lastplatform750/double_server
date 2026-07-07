@@ -1,0 +1,21 @@
+---
+- name: Template in repository file
+  ansible.builtin.template:
+    src: "{{ apk_update_repo_template }}"
+    dest: /etc/apk/repositories
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Template in world
+  ansible.builtin.template:
+    src: "{{ apk_update_world_template }}"
+    dest: /etc/apk/world
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Update system
+  ansible.builtin.package:
+    update_cache: true
+    upgrade: true

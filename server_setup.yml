@@ -78,23 +78,11 @@
         msg: "Debug is enabled!"
       when: debug | bool
 
-    - name: Template in repository file
-      ansible.builtin.template:
-        src: repositories.j2
-        dest: /etc/apk/repositories
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Update system
-      ansible.builtin.package:
-        update_cache: true
-        upgrade: true
-
-    - name: Install rsync
-      ansible.builtin.package:
-        name: rsync
-        state: present
+    - name: Update System
+      ansible.builtin.include_role:
+        name: apk_update
+      vars:
+        apk_update_world_template: server_world.j2
 
     - name: Create groups
       ansible.builtin.group:

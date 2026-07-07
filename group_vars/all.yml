@@ -1,7 +1,7 @@
 ---
 # Versions
-alpine_release: "3.24"
-alpine_repo_mirror: "https://dl-3.alpinelinux.org/"
+apk_update_release: "3.24"
+apk_update_mirror: "https://dl-3.alpinelinux.org/"
 
 beets_pip_version: "26.1.2"
 beets_setuptools_version: "81"

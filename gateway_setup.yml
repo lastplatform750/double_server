@@ -13,18 +13,11 @@
         tailscale_control_address: "{{ tailscale_tk_address }}"
 
   pre_tasks:
-    - name: Template in repository file
-      ansible.builtin.template:
-        src: repositories.j2
-        dest: /etc/apk/repositories
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Update system
-      ansible.builtin.package:
-        update_cache: true
-        upgrade: true
+    - name: Update System
+      ansible.builtin.include_role:
+        name: apk_update
+      vars:
+        apk_update_world_template: gateway_world.j2
 
     - name: Set hostname
       ansible.builtin.hostname:

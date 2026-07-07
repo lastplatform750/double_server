@@ -1,9 +1,4 @@
 ---
-- name: Install dependencies
-  ansible.builtin.package:
-    name: "{{ desktop_dependencies | join(',') }}"
-    state: present
-
 - name: Add user to seat and lp (bluetooth) group
   ansible.builtin.user:
     name: "{{ gateway_user }}"
