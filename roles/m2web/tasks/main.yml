@@ -33,6 +33,7 @@
   ansible.builtin.git:
     repo: "{{ m2web_docker_git_url }}"
     dest: "{{ stacks_dir }}/m2web/m2web_docker"
+    version: "v{{ m2web_docker_git_version }}"
 
 - name: Build the m2web dockerfile
   community.docker.docker_image_build:

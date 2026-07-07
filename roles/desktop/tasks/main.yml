@@ -64,18 +64,8 @@
 - name: Setup udev
   ansible.builtin.command:
     cmd: setup-devd udev
-
-## wbg section ##
-
-- name: Get the wbg source
-  ansible.builtin.git:
-    repo: "{{ desktop_wbg_git_url }}"
-    dest: "/home/{{ gateway_user }}/build/wbg"
-
-- name: Make and install wbg
-  ansible.builtin.shell:
-    cmd: "CC=clang-{{ gateway_clang_version }} CC_LD=lld meson setup --wipe --buildtype=release build && ninja -C build && ninja -C build install"
-    chdir: "/home/{{ gateway_user }}/build/wbg"
+  register: desktop_udev_result
+  changed_when: "desktop_udev_result.rc != 0"
 
 - name: Template in autostart script
   ansible.builtin.template:

@@ -7,6 +7,8 @@ beets_pip_version: "26.1.2"
 beets_setuptools_version: "81"
 beets_llvm_version: "20"
 
+m2web_docker_git_version: "0.0.1"
+
 gateway_clang_version: "22"
 
 ########################

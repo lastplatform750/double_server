@@ -31,6 +31,7 @@
   delegate_to: localhost
   become: false
   no_log: true
+  changed_when: false
   loop: "{{ archive_list | dict2items }}"
 
 - name: Remove unencrypted archives
