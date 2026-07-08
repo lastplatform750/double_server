@@ -1,0 +1,4 @@
+#!/bin/sh
+
+zpool scrub -w {{ zfs_pool_name }}
+zpool scrub -w extern

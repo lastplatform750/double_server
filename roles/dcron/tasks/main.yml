@@ -1,0 +1,39 @@
+---
+- name: Install dcron
+  ansible.builtin.package:
+    name: dcron
+    state: present
+
+- name: Template in crontabs file
+  ansible.builtin.template:
+    src: dcron_crontabs.j2
+    dest: /tmp/crontabs
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Template all monthly tasks
+  ansible.builtin.template:
+    src: "{{ item | basename }}"
+    dest: "/etc/periodic/monthly/{{ item | basename | splitext | first }}.sh"
+    owner: root
+    group: root
+    mode: "0700"
+  loop: "{{ (role_path + '/templates/monthly_*.j2') | fileglob }}"
+
+- name: Start and enable dcron service
+  ansible.builtin.service:
+    name: dcron
+    state: restarted
+    enabled: true
+    runlevel: boot
+
+- name: Update crontabs file
+  ansible.builtin.command:
+    argv:
+      - crontab
+      - -u
+      - root
+      - /tmp/crontabs
+  register: dcron_crontabs_result
+  changed_when: "dcron_crontabs_result.rc != 0"

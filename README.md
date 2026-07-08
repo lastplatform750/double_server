@@ -16,9 +16,6 @@ Current apps:
 
 Todo:
 - fix beets
-- more robust package handling (remove no longer needed packages)
-- fix lint errors
-- setup dcron
 - bazzite stuff
 - rocknix stuff
 - more robust backup/monitoring system

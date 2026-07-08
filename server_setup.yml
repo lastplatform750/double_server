@@ -27,6 +27,7 @@
       vars:
         check_dirs_dicts: "{{ [server_external_dirs] }}"
         check_dirs_zfs_pool: true
+    - role: dcron
     # - role: beets
     #   vars:
     #     beets_data_dir: "{{ server_external_dirs['beets']['path'] }}"
