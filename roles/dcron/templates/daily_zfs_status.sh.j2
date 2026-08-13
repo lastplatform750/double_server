@@ -1,0 +1,9 @@
+#!/bin/sh
+
+BOLDRED='\033[1;31m'
+NC='\033[0m'
+
+printf "${BOLDRED}ZFS Status at time: %s${NC}\n" "$(date +'%F %T')" >> /home/{{ main_user }}/zfs_status.log
+
+zpool status >> /home/{{ main_user }}/zfs_status.log
+zfs list >> /home/{{ main_user }}/zfs_status.log

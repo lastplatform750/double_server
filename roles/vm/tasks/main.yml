@@ -1,0 +1,31 @@
+---
+- name: Ensure dependencies are installed
+  ansible.builtin.package:
+    name:
+      - bridge
+      - qemu-system-x86_64
+      - qemu-modules
+      - libvirt
+      - libvirt-qemu
+      - virt-install
+    state: present
+
+- name: Template bridge.conf
+  ansible.builtin.template:
+    src: bridge.conf.j2
+    dest: /etc/qemu/bridge.conf
+    owner: root
+    group: qemu
+    mode: "0640"
+
+- name: Start and enable libvirtd daemon
+  ansible.builtin.service:
+    name: libvirtd
+    state: started
+    enabled: true
+
+- name: Start and enable libvirt-guests daemon
+  ansible.builtin.service:
+    name: libvirt-guests
+    state: started
+    enabled: true

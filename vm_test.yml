@@ -1,0 +1,9 @@
+---
+- name: Server Setup
+  hosts: server
+  become: true
+
+  tasks:
+    - name: Setup VM
+      ansible.builtin.include_role:
+        name: vm

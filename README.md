@@ -15,15 +15,17 @@ Current apps:
 - m2 web ui
 
 Todo:
+- figure out VM stuff
+- double check dcron stuff
+- suwayomi
 - fix beets
 - bazzite stuff
 - rocknix stuff
+- forgejo(?)
 - more robust backup/monitoring system
 - https/reverse proxy
-- forgejo(?)
-- explore other image server options
 - more hardening (apparmor?)
-- build VMs?
+- explore other image server options
 
 ## Setup
 

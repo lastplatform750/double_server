@@ -17,7 +17,7 @@
       ansible.builtin.include_role:
         name: apk_update
       vars:
-        apk_update_world_template: gateway_world.j2
+        apk_update_world_template: gateway/world.j2
 
     - name: Set hostname
       ansible.builtin.hostname:

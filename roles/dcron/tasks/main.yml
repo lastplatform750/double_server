@@ -12,10 +12,37 @@
     group: root
     mode: "0700"
 
+- name: Template all hourly tasks
+  ansible.builtin.template:
+    src: "{{ item | basename }}"
+    dest: "/etc/periodic/hourly/{{ item | basename | splitext | first }}"
+    owner: root
+    group: root
+    mode: "0700"
+  loop: "{{ (role_path + '/templates/hourly_*.j2') | fileglob }}"
+
+- name: Template all Daily tasks
+  ansible.builtin.template:
+    src: "{{ item | basename }}"
+    dest: "/etc/periodic/daily/{{ item | basename | splitext | first }}"
+    owner: root
+    group: root
+    mode: "0700"
+  loop: "{{ (role_path + '/templates/daily_*.j2') | fileglob }}"
+
+- name: Template all Weekly tasks
+  ansible.builtin.template:
+    src: "{{ item | basename }}"
+    dest: "/etc/periodic/weekly/{{ item | basename | splitext | first }}"
+    owner: root
+    group: root
+    mode: "0700"
+  loop: "{{ (role_path + '/templates/weekly_*.j2') | fileglob }}"
+
 - name: Template all monthly tasks
   ansible.builtin.template:
     src: "{{ item | basename }}"
-    dest: "/etc/periodic/monthly/{{ item | basename | splitext | first }}.sh"
+    dest: "/etc/periodic/monthly/{{ item | basename | splitext | first }}"
     owner: root
     group: root
     mode: "0700"

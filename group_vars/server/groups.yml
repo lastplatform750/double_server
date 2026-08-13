@@ -12,6 +12,8 @@ main_user_groups:
   - othermedia
   - stacks
   - m2webdata
+  - kvm
+  - qemu
 
 server_groups:
   - musicmedia

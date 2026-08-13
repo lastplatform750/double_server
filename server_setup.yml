@@ -21,6 +21,7 @@
     other_path: "{{ server_external_dirs['other']['path'] }}"
 
   roles:
+    - role: vm
     - role: docker
     - role: external_drive
     - role: check_dirs
@@ -83,7 +84,23 @@
       ansible.builtin.include_role:
         name: apk_update
       vars:
-        apk_update_world_template: server_world.j2
+        apk_update_world_template: server/world.j2
+
+    - name: Template in modules file
+      ansible.builtin.template:
+        src: server/modules.j2
+        dest: /etc/modules
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Template in interfaces file
+      ansible.builtin.template:
+        src: server/interfaces.j2
+        dest: /etc/network/interfaces
+        owner: root
+        group: root
+        mode: "0644"
 
     - name: Create groups
       ansible.builtin.group:
