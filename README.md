@@ -16,7 +16,6 @@ Current apps:
 
 Todo:
 - figure out VM stuff
-- double check dcron stuff
 - suwayomi
 - fix beets
 - bazzite stuff

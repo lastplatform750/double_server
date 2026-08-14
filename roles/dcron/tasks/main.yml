@@ -14,39 +14,39 @@
 
 - name: Template all hourly tasks
   ansible.builtin.template:
-    src: "{{ item | basename }}"
+    src: "{{ item }}"
     dest: "/etc/periodic/hourly/{{ item | basename | splitext | first }}"
     owner: root
     group: root
     mode: "0700"
-  loop: "{{ (role_path + '/templates/hourly_*.j2') | fileglob }}"
+  loop: "{{ (dcron_crontasks_dir + '/hourly_*.j2') | fileglob }}"
 
 - name: Template all Daily tasks
   ansible.builtin.template:
-    src: "{{ item | basename }}"
+    src: "{{ item }}"
     dest: "/etc/periodic/daily/{{ item | basename | splitext | first }}"
     owner: root
     group: root
     mode: "0700"
-  loop: "{{ (role_path + '/templates/daily_*.j2') | fileglob }}"
+  loop: "{{ (dcron_crontasks_dir + '/daily_*.j2') | fileglob }}"
 
 - name: Template all Weekly tasks
   ansible.builtin.template:
-    src: "{{ item | basename }}"
+    src: "{{ item }}"
     dest: "/etc/periodic/weekly/{{ item | basename | splitext | first }}"
     owner: root
     group: root
     mode: "0700"
-  loop: "{{ (role_path + '/templates/weekly_*.j2') | fileglob }}"
+  loop: "{{ (dcron_crontasks_dir + '/weekly_*.j2') | fileglob }}"
 
 - name: Template all monthly tasks
   ansible.builtin.template:
-    src: "{{ item | basename }}"
+    src: "{{ item }}"
     dest: "/etc/periodic/monthly/{{ item | basename | splitext | first }}"
     owner: root
     group: root
     mode: "0700"
-  loop: "{{ (role_path + '/templates/monthly_*.j2') | fileglob }}"
+  loop: "{{ (dcron_crontasks_dir + '/monthly_*.j2') | fileglob }}"
 
 - name: Start and enable dcron service
   ansible.builtin.service:
