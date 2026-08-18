@@ -1,0 +1,34 @@
+---
+- name: Create suwayomi stacks dir
+  ansible.builtin.file:
+    name: "{{ stacks_dir }}/suwayomi"
+    state: directory
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_group }}"
+    mode: "0750"
+
+- name: Template in docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ stacks_dir }}/suwayomi/docker-compose.yml"
+    owner: "{{ stacks_owner }}"
+    group: "{{ stacks_owner }}"
+    mode: "0700"
+
+- name: Start the suwayomi service
+  community.docker.docker_compose_v2:
+    project_name: suwayomi
+    project_src: "{{ stacks_dir }}/suwayomi"
+    state: present
+    pull: "{{ update_dockers | ternary('always', 'never', omit) }}"
+  register: suwayomi_docker_output
+
+- name: Show results
+  ansible.builtin.debug:
+    var: suwayomi_docker_output
+
+- name: Shut suwayomi down
+  community.docker.docker_compose_v2:
+    project_src: "{{ stacks_dir }}/suwayomi"
+    state: stopped
+  when: debug | bool

@@ -36,6 +36,7 @@ paperless_port: 8000
 m2web_port: 8002
 anki_port: 8070
 jellyfin_port: 8096
+suwayomi_port: 4567
 
 qbittorrent_webui_port: 8090
 qbittorrent_torrent_port: 50090

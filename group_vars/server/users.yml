@@ -13,3 +13,5 @@ service_users:
     name: navidrome
   immich:
     name: immich
+  suwayomi:
+    name: suwayomi

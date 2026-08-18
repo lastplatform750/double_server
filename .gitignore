@@ -3,4 +3,5 @@
 hosts.ini
 vm_hosts.ini
 secret.yml
+test.yml
 qbittorrent-temp-password-line.txt

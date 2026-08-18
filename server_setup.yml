@@ -31,25 +31,27 @@
     - role: dcron
       vars:
         dcron_crontasks_dir: "{{ playbook_dir }}/templates/server/crontasks"
-    # - role: beets
-    #   vars:
-    #     beets_data_dir: "{{ server_external_dirs['beets']['path'] }}"
-    #     beets_music_tagged_dir: "{{ server_external_dirs['music_tagged']['path'] }}"
-    #     beets_install_dir: "{{ server_internal_dirs['beets_install']['path'] }}"
-    #     beets_config_dir: "{{ server_internal_dirs['beets_config']['path'] }}"
+    # Services
     - role: anki
       vars:
         anki_user: "{{ service_users['anki']['name'] }}"
         anki_srv_dir: "{{ server_internal_dirs['anki_srv_dir']['path'] }}"
-    - role: m2web
+    - role: immich
       vars:
-        m2web_srv_dir: "{{ server_internal_dirs['m2web_srv_dir']['path'] }}"
-    - role: qbittorrent
+        immich_user: "{{ service_users['immich']['name'] }}"
+        immich_user_uid: "{{ uid_dict[immich_user] }}"
+        immich_user_gid: "{{ gid_dict[immich_user] }}"
+        immich_srv_dir: "{{ server_internal_dirs['immich_srv_dir']['path'] }}"
+    - role: jellyfin
       vars:
-        qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"
-        qbittorrent_user_uid: "{{ uid_dict[qbittorrent_user] }}"
-        qbittorrent_user_gid: "{{ gid_dict[qbittorrent_user] }}"
-        qbittorrent_srv_dir: "{{ server_internal_dirs['qbittorrent_srv_dir']['path'] }}"
+        jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
+        jellyfin_user_uid: "{{ uid_dict[jellyfin_user] }}"
+        jellyfin_user_gid: "{{ gid_dict[jellyfin_user] }}"
+    - role: navidrome
+      vars:
+        navidrome_user: "{{ service_users['navidrome']['name'] }}"
+        navidrome_user_uid: "{{ uid_dict[navidrome_user] }}"
+        navidrome_user_gid: "{{ gid_dict[navidrome_user] }}"
     - role: paperless
       vars:
         paperless_user: "{{ service_users['paperless']['name'] }}"
@@ -59,22 +61,29 @@
         paperless_srv_media_dir: "{{ server_internal_dirs['paperless_srv_media_dir']['path'] }}"
         paperless_srv_export_dir: "{{ server_internal_dirs['paperless_srv_export_dir']['path'] }}"
         paperless_srv_consume_dir: "{{ server_internal_dirs['paperless_srv_consume_dir']['path'] }}"
-    - role: navidrome
+    - role: qbittorrent
       vars:
-        navidrome_user: "{{ service_users['navidrome']['name'] }}"
-        navidrome_user_uid: "{{ uid_dict[navidrome_user] }}"
-        navidrome_user_gid: "{{ gid_dict[navidrome_user] }}"
-    - role: jellyfin
+        qbittorrent_user: "{{ service_users['qbittorrent']['name'] }}"
+        qbittorrent_user_uid: "{{ uid_dict[qbittorrent_user] }}"
+        qbittorrent_user_gid: "{{ gid_dict[qbittorrent_user] }}"
+        qbittorrent_srv_dir: "{{ server_internal_dirs['qbittorrent_srv_dir']['path'] }}"
+    - role: suwayomi
       vars:
-        jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
-        jellyfin_user_uid: "{{ uid_dict[jellyfin_user] }}"
-        jellyfin_user_gid: "{{ gid_dict[jellyfin_user] }}"
-    - role: immich
+        suwayomi_user: "{{ service_users['suwayomi']['name'] }}"
+        suwayomi_user_uid: "{{ uid_dict[suwayomi_user] }}"
+        suwayomi_user_gid: "{{ gid_dict[suwayomi_user] }}"
+        suwayomi_srv_data_dir: "{{ server_external_dirs['suwayomi_data']['path'] }}"
+    # m2web last just cause it takes a while
+    - role: m2web
       vars:
-        immich_user: "{{ service_users['immich']['name'] }}"
-        immich_user_uid: "{{ uid_dict[immich_user] }}"
-        immich_user_gid: "{{ gid_dict[immich_user] }}"
-        immich_srv_dir: "{{ server_internal_dirs['immich_srv_dir']['path'] }}"
+        m2web_srv_dir: "{{ server_internal_dirs['m2web_srv_dir']['path'] }}"
+
+    # - role: beets
+    #   vars:
+    #     beets_data_dir: "{{ server_external_dirs['beets']['path'] }}"
+    #     beets_music_tagged_dir: "{{ server_external_dirs['music_tagged']['path'] }}"
+    #     beets_install_dir: "{{ server_internal_dirs['beets_install']['path'] }}"
+    #     beets_config_dir: "{{ server_internal_dirs['beets_config']['path'] }}"
 
   pre_tasks:
     - name: Announce debug

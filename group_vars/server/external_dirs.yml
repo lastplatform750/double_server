@@ -79,6 +79,12 @@ server_external_dirs:
     group: immich
     mode: "0700"
     recurse: false
+  suwayomi_data:
+    path: "{{ external_mount }}/suwayomi"
+    mode: "0700"
+    owner: suwayomi
+    group: suwayomi
+    recurse: true
   archive:
     path: "{{ external_mount }}/archive"
     owner: "{{ main_user }}"

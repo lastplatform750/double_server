@@ -1,0 +1,40 @@
+---
+services:
+  suwayomi:
+    image: ghcr.io/suwayomi/suwayomi-server:preview
+    user: {{ suwayomi_user_uid }}:{{ suwayomi_user_gid }}
+    environment:
+      - TZ=Etc/UTC # Use TZ database name from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      # Comment these out if you do not use the flaresolverr container at the bottom of this file
+      - FLARESOLVERR_ENABLED=true
+      - FLARESOLVERR_URL=http://flaresolverr:8191
+#  #################################################################################################
+#
+#    !!! IMPORTANT !!!
+#     - server settings can be changed during runtime in the WebUI
+#     - providing an environment variable will OVERWRITE the current setting value when starting the container
+#
+#  #################################################################################################
+#
+#    example for setting env vars:
+#
+#      - BIND_IP=0.0.0.0
+#      - BIND_PORT=4567
+#      - SOCKS_PROXY_ENABLED=false
+#      - DOWNLOAD_AS_CBZ=true
+#      - AUTH_MODE=basic_auth
+#      - AUTH_USERNAME=manga
+#      - AUTH_PASSWORD=hello123
+#      - EXTENSION_STORES=["https://raw.githubusercontent.com/MY_ACCOUNT/MY_EXTENSION_STORE/repo/index.min.json", "https://raw.githubusercontent.com/MY_ACCOUNT_2/MY_REPO_2/repo/index.pb"]
+    volumes:
+      - {{ suwayomi_srv_data_dir }}:/home/suwayomi/.local/share/Tachidesk
+    ports:
+      - "{{ suwayomi_port }}:{{ suwayomi_port }}"
+    restart: on-failure:3
+
+  flaresolverr:
+    image: ghcr.io/thephaseless/byparr:latest
+    container_name: flaresolverr
+    environment:
+      - TZ=Etc/UTC # Use TZ database name from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    restart: unless-stopped
