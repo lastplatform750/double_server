@@ -47,6 +47,12 @@
         jellyfin_user: "{{ service_users['jellyfin']['name'] }}"
         jellyfin_user_uid: "{{ uid_dict[jellyfin_user] }}"
         jellyfin_user_gid: "{{ gid_dict[jellyfin_user] }}"
+        jellyfin_shoko_user: "{{ service_users['shoko']['name'] }}"
+        jellyfin_shoko_uid: "{{ uid_dict[jellyfin_shoko_user] }}"
+        jellyfin_shoko_gid: "{{ gid_dict[jellyfin_shoko_user] }}"
+        jellyfin_shoko_srv_dir: "{{ server_internal_dirs['shoko_srv_dir']['path'] }}"
+        jellyfin_srv_config_path: "{{ server_internal_dirs['jellyfin_srv_config_dir']['path'] }}"
+        jellyfin_srv_cache_path: "{{ server_internal_dirs['jellyfin_srv_cache_dir']['path'] }}"
     - role: navidrome
       vars:
         navidrome_user: "{{ service_users['navidrome']['name'] }}"
@@ -130,7 +136,7 @@
       ansible.builtin.user:
         name: "{{ item.value['name'] }}"
         state: present
-        groups: []
+        groups: "{{ item.value['groups'] }}"
         create_home: false
       loop: "{{ service_users | dict2items }}"
 

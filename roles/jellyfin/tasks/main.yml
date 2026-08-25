@@ -23,13 +23,13 @@
     group: "{{ stacks_owner }}"
     mode: "0700"
 
-- name: Add external volumes to jellyfin server
-  ansible.builtin.lineinfile:
-    path: "{{ stacks_dir }}/jellyfin/docker-compose.yml"
-    insertafter: "^\\s{4}volumes:$"
-    line: "      - {{ item.value['host'] }}:{{ item.value['dest'] }}{{ item.value['flags'] }}"
-    state: present
-  loop: "{{ jellyfin_volumes | dict2items }}"
+# - name: Add external volumes to jellyfin server
+#   ansible.builtin.lineinfile:
+#     path: "{{ stacks_dir }}/jellyfin/docker-compose.yml"
+#     insertafter: "^\\s{4}volumes:$"
+#     line: "      - {{ item.value['host'] }}:{{ item.value['dest'] }}{{ item.value['flags'] }}"
+#     state: present
+#   loop: "{{ jellyfin_volumes | dict2items }}"
 
 - name: Start the jellyfin service
   community.docker.docker_compose_v2:

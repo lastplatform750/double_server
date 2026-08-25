@@ -47,6 +47,12 @@ server_internal_dirs:
     group: "{{ service_users['anki']['name'] }}"
     mode: "0700"
     recurse: true
+  shoko_srv_dir:
+    path: /srv/shoko
+    owner: "{{ service_users['shoko']['name'] }}"
+    group: "{{ service_users['shoko']['name'] }}"
+    mode: "0700"
+    recurse: true
   immich_srv_dir:
     path: /srv/immich
     owner: "{{ service_users['immich']['name'] }}"

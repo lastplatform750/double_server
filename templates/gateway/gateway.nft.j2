@@ -7,7 +7,7 @@ table inet filter {
     type filter hook forward priority 0; policy drop;
     ct state established,related accept
     iifname "eth0" oifname "wlan0" accept
-    iifname { "wlan0", "tailscale0" } oifname "eth0" tcp dport { {{ server_internal_ssh_port }}, {{ immich_port }}, {{ paperless_port }}, {{ anki_port }}, {{ jellyfin_port }}, {{ suwayomi_port }}, {{ navidrome_port }}, {{ qbittorrent_webui_port }} } accept
+    iifname { "wlan0", "tailscale0" } oifname "eth0" tcp dport { {{ server_internal_ssh_port }}, {{ immich_port }}, {{ paperless_port }}, {{ anki_port }}, {{ jellyfin_port }}, {{ suwayomi_port }}, {{ navidrome_port }}, {{ qbittorrent_webui_port }}, {{ shoko_port }} } accept
     iifname "tailscale0" oifname "eth0" tcp dport {{ m2web_port }} accept
     iifname "wlan0" oifname "eth0" tcp dport {{ qbittorrent_torrent_port }} accept
     iifname "wlan0" oifname "eth0" udp dport {{ qbittorrent_torrent_port }} accept
@@ -27,6 +27,7 @@ table ip nat {
     iifname { "wlan0", "tailscale0" } tcp dport {{ anki_port }} dnat to {{ server_subnet_ip }}:{{ anki_port }}
     iifname { "wlan0", "tailscale0" } tcp dport {{ jellyfin_port }} dnat to {{ server_subnet_ip }}:{{ jellyfin_port }}
     iifname { "wlan0", "tailscale0" } tcp dport {{ suwayomi_port }} dnat to {{ server_subnet_ip }}:{{ suwayomi_port }}
+    iifname { "wlan0", "tailscale0" } tcp dport {{ shoko_port }} dnat to {{ server_subnet_ip }}:{{ shoko_port }}
     iifname { "wlan0", "tailscale0" } tcp dport {{ navidrome_port }} dnat to {{ server_subnet_ip }}:{{ navidrome_port }}
     iifname { "wlan0", "tailscale0" } tcp dport {{ qbittorrent_webui_port }} dnat to {{ server_subnet_ip }}:{{ qbittorrent_webui_port }}
     iifname "wlan0" tcp dport {{ qbittorrent_torrent_port }} dnat to {{ server_subnet_ip }}:{{ qbittorrent_torrent_port }}

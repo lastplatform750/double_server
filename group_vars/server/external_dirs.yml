@@ -7,26 +7,56 @@ server_external_dirs:
     group: vidmedia
     mode: "0750"
     recurse: false
-  vid_live:
-    path: "{{ external_mount }}/vid/live"
+  vid_live_movie:
+    path: "{{ external_mount }}/vid/live_movie"
     owner: qbittorrent
     group: vidmedia
     mode: "0750"
     recurse: true
-  vid_animated:
-    path: "{{ external_mount }}/vid/animated"
+  vid_live_show:
+    path: "{{ external_mount }}/vid/live_show"
     owner: qbittorrent
     group: vidmedia
     mode: "0750"
     recurse: true
-  vid_key:
-    path: "{{ external_mount }}/vid/key"
+  vid_anime_movie:
+    path: "{{ external_mount }}/vid/anime_movie"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0755"
+    recurse: true
+  vid_anime_show:
+    path: "{{ external_mount }}/vid/anime_show"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0755"
+    recurse: true
+  vid_cartoon_movie:
+    path: "{{ external_mount }}/vid/cartoon_movie"
     owner: qbittorrent
     group: vidmedia
     mode: "0750"
     recurse: true
-  vid_show:
-    path: "{{ external_mount }}/vid/show"
+  vid_cartoon_show:
+    path: "{{ external_mount }}/vid/cartoon_show"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0750"
+    recurse: true
+  vid_key_anime:
+    path: "{{ external_mount }}/vid/key_anime"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0755"
+    recurse: true
+  vid_key_cartoon:
+    path: "{{ external_mount }}/vid/key_cartoon"
+    owner: qbittorrent
+    group: vidmedia
+    mode: "0750"
+    recurse: true
+  vid_key_live:
+    path: "{{ external_mount }}/vid/key_live"
     owner: qbittorrent
     group: vidmedia
     mode: "0750"

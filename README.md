@@ -6,13 +6,14 @@ Current setup:
 
 Current apps:
 - anki sync
-- jellyfin
+- jellyfin (with shoko)
 - paperless
 - qbittorrent
 - navidrome
 - immich
 - beets
 - m2 web ui
+- suwayomi
 
 Todo:
 - figure out VM stuff

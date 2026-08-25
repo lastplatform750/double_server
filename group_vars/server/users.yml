@@ -3,15 +3,37 @@
 service_users:
   anki:
     name: anki
+    groups:
+      - anki
   paperless:
     name: paperless
+    groups:
+      - paperless
   qbittorrent:
     name: qbittorrent
+    groups:
+      - qbittorrent
+      - vidmedia
+      - picmedia
   jellyfin:
     name: jellyfin
+    groups:
+      - jellyfin
+      - vidmedia
   navidrome:
     name: navidrome
+    groups:
+      - navidrome
   immich:
     name: immich
+    groups:
+      - immich
+      - picmedia
   suwayomi:
     name: suwayomi
+    groups:
+      - suwayomi
+  shoko:
+    name: shoko
+    groups:
+      - shoko
