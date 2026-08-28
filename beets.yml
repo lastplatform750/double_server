@@ -1,0 +1,28 @@
+---
+- name: Beets Install/Update
+  hosts: server
+  become: true
+  roles:
+    - role: beets
+      vars:
+        beets_data_dir: "{{ server_external_dirs['beets']['path'] }}"
+        beets_music_tagged_dir: "{{ server_external_dirs['music_tagged']['path'] }}"
+        beets_install_dir: "{{ server_internal_dirs['beets_install']['path'] }}"
+        beets_config_dir: "{{ server_internal_dirs['beets_config']['path'] }}"
+  pre_tasks:
+    - name: Update World
+      ansible.builtin.include_role:
+        name: apk_update
+      vars:
+        apk_update_world_template: server/world.j2
+    - name: Ensure internal directories
+      ansible.builtin.include_role:
+        name: check_dirs
+      vars:
+        check_dirs_dicts: "{{ [server_internal_dirs] }}"
+  post_tasks:
+    - name: Return Packages to Standard World
+      ansible.builtin.include_role:
+        name: apk_update
+      vars:
+        apk_update_world_template: server/world.j2

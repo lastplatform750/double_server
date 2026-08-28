@@ -17,7 +17,6 @@ Current apps:
 
 Todo:
 - figure out VM stuff
-- fix beets
 - bazzite stuff
 - rocknix stuff
 - forgejo(?)

@@ -3,6 +3,7 @@
   ansible.builtin.package:
     name:
       - py3-pip
+      - py3-packaging
       - python3-dev
       - gstreamer
       - build-base
@@ -23,7 +24,6 @@
     name: pip
     virtualenv: "{{ beets_install_dir }}/venv"
     virtualenv_command: "python3 -m venv"
-    version: "{{ beets_pip_version }}"
     state: present
 
 - name: Template the beets config
